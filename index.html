@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Divine Messenger — Божественный чат</title>
+    <title>Divine Messenger — Божественный мессенджер</title>
     <style>
         * {
             margin: 0;
@@ -13,13 +13,13 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0A0A0A;
+            background: #000000;
             height: 100vh;
             overflow: hidden;
             color: #FFFFFF;
         }
 
-        /* Главный контейнер */
+        /* Главный контейнер — как экран телефона */
         .app {
             display: flex;
             flex-direction: column;
@@ -28,7 +28,7 @@
             margin: 0 auto;
             background: #0A0A0A;
             position: relative;
-            box-shadow: 0 0 40px rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 0 1px rgba(0,255,136,0.1);
         }
 
         /* Шапка */
@@ -39,7 +39,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            backdrop-filter: blur(10px);
         }
 
         .logo {
@@ -49,21 +48,20 @@
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #00FF88, #00CC66);
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #00FF88, #00AA55);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            font-size: 20px;
+            box-shadow: 0 0 12px rgba(0,255,136,0.4);
         }
 
         .logo-text {
             font-size: 20px;
-            font-weight: 600;
+            font-weight: 700;
             background: linear-gradient(135deg, #FFFFFF, #00FF88);
             -webkit-background-clip: text;
             background-clip: text;
@@ -76,18 +74,24 @@
         }
 
         .icon-btn {
-            color: #00FF88;
             font-size: 22px;
             cursor: pointer;
-            transition: 0.2s;
+            color: #00FF88;
         }
 
-        .icon-btn:hover {
-            transform: scale(1.1);
-            text-shadow: 0 0 8px #00FF88;
+        /* Экраны */
+        .screen {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
         }
 
-        /* Список чатов */
+        .screen.active {
+            display: flex;
+        }
+
+        /* ========== ЧАТЫ ========== */
         .chats-list {
             flex: 1;
             overflow-y: auto;
@@ -97,15 +101,15 @@
         .chat-item {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
+            padding: 14px 20px;
             gap: 14px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.15s;
             border-bottom: 1px solid #141414;
         }
 
-        .chat-item:hover {
-            background: #141414;
+        .chat-item:active {
+            background: #1A1A1A;
         }
 
         .chat-avatar {
@@ -117,30 +121,45 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            border: 1px solid #2A2A2A;
+            position: relative;
+        }
+
+        .online-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #00FF88;
+            border-radius: 50%;
+            border: 2px solid #0A0A0A;
         }
 
         .chat-info {
             flex: 1;
         }
 
+        .chat-name-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
         .chat-name {
             font-size: 16px;
             font-weight: 500;
-            margin-bottom: 4px;
-            color: #FFFFFF;
-        }
-
-        .chat-preview {
-            font-size: 13px;
-            color: #888888;
-            display: flex;
-            gap: 8px;
         }
 
         .chat-time {
             font-size: 11px;
-            color: #555555;
+            color: #666;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
         }
 
         .badge {
@@ -150,11 +169,10 @@
             padding: 2px 8px;
             font-size: 11px;
             font-weight: bold;
-            margin-left: 8px;
         }
 
-        /* Экран чата (изначально скрыт) */
-        .chat-screen {
+        /* ========== ЭКРАН ЧАТА ========== */
+        .chat-screen-container {
             position: absolute;
             top: 0;
             left: 0;
@@ -163,7 +181,7 @@
             background: #0A0A0A;
             display: none;
             flex-direction: column;
-            z-index: 10;
+            z-index: 20;
         }
 
         .chat-header {
@@ -181,14 +199,38 @@
             color: #00FF88;
             font-size: 28px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
         }
 
-        .chat-title {
+        .chat-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             flex: 1;
+        }
+
+        .chat-profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00FF88, #00AA55);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .chat-profile-info {
+            flex: 1;
+        }
+
+        .chat-profile-name {
             font-weight: 600;
-            font-size: 17px;
+            font-size: 16px;
+        }
+
+        .chat-profile-status {
+            font-size: 11px;
+            color: #00FF88;
         }
 
         .messages-area {
@@ -200,15 +242,13 @@
             gap: 8px;
         }
 
-        /* Пузырьки сообщений */
         .message {
             display: flex;
-            max-width: 80%;
+            max-width: 85%;
         }
 
         .my-message {
             align-self: flex-end;
-            justify-content: flex-end;
         }
 
         .their-message {
@@ -217,10 +257,8 @@
 
         .bubble {
             padding: 10px 14px;
-            border-radius: 20px;
+            border-radius: 18px;
             font-size: 15px;
-            line-height: 1.4;
-            position: relative;
             word-wrap: break-word;
         }
 
@@ -228,7 +266,6 @@
             background: #00FF88;
             color: #0A0A0A;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.2);
         }
 
         .their-bubble {
@@ -244,7 +281,6 @@
             text-align: right;
         }
 
-        /* Панель ввода */
         .input-bar {
             padding: 12px 16px;
             background: #0A0A0A;
@@ -252,7 +288,6 @@
             display: flex;
             gap: 12px;
             align-items: center;
-            backdrop-filter: blur(20px);
         }
 
         .input-field {
@@ -264,12 +299,10 @@
             color: white;
             font-size: 15px;
             outline: none;
-            transition: 0.2s;
         }
 
         .input-field:focus {
             border-color: #00FF88;
-            box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
         }
 
         .send-btn {
@@ -283,320 +316,583 @@
             justify-content: center;
             font-size: 20px;
             cursor: pointer;
-            transition: 0.2s;
             color: #0A0A0A;
-            font-weight: bold;
         }
 
-        .send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 12px #00FF88;
+        /* ========== КОНТАКТЫ ========== */
+        .contacts-list {
+            padding: 8px 0;
         }
 
-        /* Настройки */
-        .settings-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #0A0A0A;
-            display: none;
-            flex-direction: column;
-            z-index: 10;
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #141414;
+            cursor: pointer;
+        }
+
+        .contact-avatar {
+            width: 48px;
+            height: 48px;
+            background: #1F1F1F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .contact-name {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .contact-status {
+            font-size: 11px;
+            color: #00FF88;
+        }
+
+        /* ========== ЗВОНКИ ========== */
+        .calls-list {
+            padding: 8px 0;
+        }
+
+        .call-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #141414;
+        }
+
+        .call-icon {
+            font-size: 24px;
+            width: 48px;
+            text-align: center;
+        }
+
+        .call-info {
+            flex: 1;
+        }
+
+        .call-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .call-time {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .call-status {
+            font-size: 12px;
+            color: #FF4444;
+        }
+
+        .call-status.missed {
+            color: #FF4444;
+        }
+
+        .call-status.answered {
+            color: #00FF88;
+        }
+
+        /* ========== НАСТРОЙКИ ========== */
+        .settings-list {
+            padding: 0;
+        }
+
+        .settings-group {
+            margin: 20px 0;
+        }
+
+        .settings-group-title {
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #00FF88;
+            text-transform: uppercase;
         }
 
         .settings-item {
-            padding: 16px 20px;
+            padding: 14px 20px;
+            background: #0A0A0A;
             border-bottom: 1px solid #141414;
             display: flex;
             justify-content: space-between;
-            color: white;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            font-size: 20px;
+            width: 28px;
+        }
+
+        .settings-label {
+            font-size: 15px;
+        }
+
+        .settings-value {
+            color: #00FF88;
+            font-size: 14px;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin: 0 4px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .color-green { background: #00FF88; }
+        .color-blue { background: #0088FF; }
+        .color-purple { background: #9C27B0; }
+        .color-pink { background: #FF69B4; }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            background: #0A0A0A;
+            border-top: 1px solid #1F1F1F;
+            display: flex;
+            padding: 8px 20px 14px;
+            justify-content: space-around;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .nav-icon {
+            font-size: 22px;
+        }
+
+        .nav-item.active {
+            color: #00FF88;
         }
 
         /* Анимации */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .message {
-            animation: fadeIn 0.25s ease;
-        }
-
-        /* Стилизация скролла */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1A1A1A;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #00FF88;
-            border-radius: 4px;
+            animation: fadeIn 0.2s ease;
         }
     </style>
 </head>
 <body>
-<div class="app" id="app">
-    <!-- Список чатов -->
-    <div id="chatsScreen" style="display: flex; flex-direction: column; height: 100%;">
-        <div class="header">
-            <div class="logo">
-                <div class="logo-icon">✦</div>
-                <div class="logo-text">Divine</div>
-            </div>
-            <div class="header-actions">
-                <div class="icon-btn" id="settingsBtn">⚙️</div>
-                <div class="icon-btn" id="newChatBtn">✚</div>
-            </div>
+<div class="app">
+    <!-- Шапка -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">✦</div>
+            <div class="logo-text">DIVINE</div>
         </div>
-        <div class="chats-list" id="chatsList">
-            <!-- Динамические чаты -->
+        <div class="header-actions">
+            <div class="icon-btn" id="searchBtn">🔍</div>
         </div>
     </div>
 
-    <!-- Экран чата -->
-    <div id="chatScreen" class="chat-screen">
-        <div class="chat-header">
-            <button class="back-btn" id="backToChats">←</button>
-            <div class="chat-title" id="chatTitle">Загрузка...</div>
-            <div class="icon-btn" style="font-size: 20px;">⋮</div>
-        </div>
-        <div class="messages-area" id="messagesArea">
-            <!-- Сообщения -->
-        </div>
-        <div class="input-bar">
-            <input type="text" class="input-field" id="messageInput" placeholder="Divine сообщение...">
-            <button class="send-btn" id="sendBtn">➤</button>
+    <!-- Экран: Чаты -->
+    <div id="chatsScreen" class="screen active">
+        <div class="chats-list" id="chatsList"></div>
+    </div>
+
+    <!-- Экран: Контакты -->
+    <div id="contactsScreen" class="screen">
+        <div class="contacts-list" id="contactsList"></div>
+    </div>
+
+    <!-- Экран: Звонки -->
+    <div id="callsScreen" class="screen">
+        <div class="calls-list" id="callsList"></div>
+    </div>
+
+    <!-- Экран: Настройки -->
+    <div id="settingsScreen" class="screen">
+        <div class="settings-list">
+            <div class="settings-group">
+                <div class="settings-group-title">ВНЕШНИЙ ВИД</div>
+                <div class="settings-item" id="themeColorItem">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">🎨</span>
+                        <span class="settings-label">Цвет акцента</span>
+                    </div>
+                    <div class="settings-value" id="currentColorLabel">Зелёный</div>
+                </div>
+                <div class="settings-item" id="bgImageItem">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">🌌</span>
+                        <span class="settings-label">Фон чата</span>
+                    </div>
+                    <div class="settings-value">Космос</div>
+                </div>
+            </div>
+            <div class="settings-group">
+                <div class="settings-group-title">БЕЗОПАСНОСТЬ</div>
+                <div class="settings-item">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">🔒</span>
+                        <span class="settings-label">Сквозное шифрование</span>
+                    </div>
+                    <div class="settings-value">Включено (E2EE)</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">⏱️</span>
+                        <span class="settings-label">Самоуничтожение</span>
+                    </div>
+                    <div class="settings-value">Выкл</div>
+                </div>
+            </div>
+            <div class="settings-group">
+                <div class="settings-group-title">ПРОФИЛЬ</div>
+                <div class="settings-item">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">👤</span>
+                        <span class="settings-label">Divine User</span>
+                    </div>
+                    <div class="settings-value">⭐</div>
+                </div>
+            </div>
+            <div class="settings-group">
+                <div class="settings-group-title">О ПРИЛОЖЕНИИ</div>
+                <div class="settings-item">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">✨</span>
+                        <span class="settings-label">Версия Divine</span>
+                    </div>
+                    <div class="settings-value">1.0.0</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Экран настроек -->
-    <div id="settingsScreen" class="settings-screen">
-        <div class="chat-header">
-            <button class="back-btn" id="backFromSettings">←</button>
-            <div class="chat-title">Настройки</div>
+    <!-- Выбор цвета (скрытое меню) -->
+    <div id="colorPickerModal" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1A1A1A; border-radius:20px 20px 0 0; padding:20px; z-index:100; max-width:500px; margin:0 auto;">
+        <div style="font-size:18px; margin-bottom:16px; text-align:center;">Выберите божественный цвет</div>
+        <div style="display:flex; justify-content:space-around;">
+            <div class="color-option color-green" data-color="green" data-code="#00FF88" data-name="Зелёный"></div>
+            <div class="color-option color-blue" data-color="blue" data-code="#0088FF" data-name="Синий"></div>
+            <div class="color-option color-purple" data-color="purple" data-code="#9C27B0" data-name="Фиолетовый"></div>
+            <div class="color-option color-pink" data-color="pink" data-code="#FF69B4" data-name="Розовый"></div>
         </div>
-        <div class="settings-item">
-            <span>🌟 Божественная тема</span>
-            <span>Вкл</span>
-        </div>
-        <div class="settings-item">
-            <span>🔒 Сквозное шифрование</span>
-            <span>Active (E2EE)</span>
-        </div>
-        <div class="settings-item">
-            <span>🎨 Цвет своих сообщений</span>
-            <span style="color:#00FF88;">● Neo Green</span>
-        </div>
-        <div class="settings-item">
-            <span>👤 Имя профиля</span>
-            <span>Divine User</span>
-        </div>
-        <div class="settings-item">
-            <span>🌙 Тёмная магия</span>
-            <span>Включена</span>
-        </div>
-        <div class="settings-item">
-            <span>⚡ Анимации</span>
-            <span>Божественные</span>
-        </div>
+        <button id="closeColorPicker" style="margin-top:20px; width:100%; padding:12px; background:#2A2A2A; border:none; color:white; border-radius:28px;">Закрыть</button>
+    </div>
+
+    <!-- Контейнер для открытого чата -->
+    <div id="chatContainer" class="chat-screen-container"></div>
+
+    <!-- Нижняя навигация -->
+    <div class="bottom-nav">
+        <button class="nav-item active" data-screen="chats">
+            <div class="nav-icon">💬</div>
+            <div>Чаты</div>
+        </button>
+        <button class="nav-item" data-screen="contacts">
+            <div class="nav-icon">👥</div>
+            <div>Контакты</div>
+        </button>
+        <button class="nav-item" data-screen="calls">
+            <div class="nav-icon">📞</div>
+            <div>Звонки</div>
+        </button>
+        <button class="nav-item" data-screen="settings">
+            <div class="nav-icon">⚙️</div>
+            <div>Настройки</div>
+        </button>
     </div>
 </div>
 
 <script>
-    // ---------- БОЖЕСТВЕННЫЕ ДАННЫЕ ----------
-    let currentChatId = null;
-    
+    // ==================== ДАННЫЕ ====================
+    let currentColor = '#00FF88';
+    let currentColorName = 'Зелёный';
+
     // Чаты
     let chats = [
-        { id: 1, name: "⭐ Ангельский отряд", avatar: "👼", lastMessage: "Да будет свет!", time: "12:30", unread: 2 },
-        { id: 2, name: "✨ Избранные души", avatar: "✨", lastMessage: "Молитва в 20:00", time: "11:15", unread: 0 },
-        { id: 3, name: "🌙 Лунный совет", avatar: "🌙", lastMessage: "Тёмное пророчество", time: "Вчера", unread: 5 },
-        { id: 4, name: "🔥 Серафимы кода", avatar: "🔥", lastMessage: "Push в рай", time: "Вчера", unread: 1 },
-        { id: 5, name: "💎 Divine Devs", avatar: "💎", lastMessage: "Гитхаб освящён", time: "Пн", unread: 0 }
+        { id: 1, name: "Ангелы кода", avatar: "👼", lastMessage: "Да будет свет", time: "12:30", unread: 2, online: true, messages: [
+            { text: "Привет, добро пожаловать в Divine!", isMe: false, time: "12:28" },
+            { text: "Спасибо! Крутой дизайн ✨", isMe: true, time: "12:29" }
+        ]},
+        { id: 2, name: "Лунный совет", avatar: "🌙", lastMessage: "Тьма отступает", time: "11:15", unread: 0, online: false, messages: [
+            { text: "Луна сегодня полная", isMe: false, time: "11:10" },
+            { text: "Магия усиливается", isMe: true, time: "11:12" }
+        ]},
+        { id: 3, name: "Серафимы", avatar: "🔥", lastMessage: "Пламя кода", time: "Вчера", unread: 5, online: true, messages: [
+            { text: "Где наш репозиторий?", isMe: false, time: "Вчера 20:00" },
+            { text: "На GitHub, ветка divine", isMe: true, time: "Вчера 20:05" }
+        ]},
+        { id: 4, name: "Хранители", avatar: "⚡", lastMessage: "Энергия чиста", time: "Пн", unread: 0, online: true, messages: [
+            { text: "Вы готовы?", isMe: false, time: "Пн 09:00" }
+        ]}
     ];
 
-    // Сообщения (ключ = id чата)
-    let messagesDB = {
-        1: [
-            { text: "Святой вечер, братья!", isMe: false, time: "12:28" },
-            { text: "И вам мир ✨", isMe: true, time: "12:29" },
-            { text: "Когда новый Divine релиз?", isMe: false, time: "12:30" }
-        ],
-        2: [
-            { text: "Красота неземная...", isMe: false, time: "10:58" },
-            { text: "Согласен, градиенты 🔥", isMe: true, time: "11:02" }
-        ],
-        3: [
-            { text: "Луна растёт", isMe: false, time: "23:15" },
-            { text: "Сила внутри нас", isMe: true, time: "23:16" },
-            { text: "⚡ Тьма отступает", isMe: false, time: "23:17" }
-        ],
-        4: [
-            { text: "Код написан кровью?", isMe: false, time: "13:40" },
-            { text: "Нет, слезами ангелов", isMe: true, time: "13:42" }
-        ],
-        5: [
-            { text: "Flutter или React?", isMe: false, time: "09:12" },
-            { text: "Divine Flutter ✦", isMe: true, time: "09:19" }
-        ]
-    };
+    // Контакты
+    let contacts = [
+        { id: 101, name: "Михаил Архангел", avatar: "👼", status: "онлайн", online: true },
+        { id: 102, name: "Гавриил", avatar: "🕊️", status: "был(а) 5 мин назад", online: false },
+        { id: 103, name: "Уриил", avatar: "✨", status: "онлайн", online: true },
+        { id: 104, name: "Рафаил", avatar: "💚", status: "печатает...", online: true }
+    ];
 
-    // Функция отрисовки списка чатов
+    // Звонки
+    let calls = [
+        { id: 201, name: "Михаил Архангел", avatar: "👼", type: "входящий", status: "пропущенный", time: "Сегодня 14:30", duration: "" },
+        { id: 202, name: "Гавриил", avatar: "🕊️", type: "исходящий", status: "отвечен", time: "Вчера 19:20", duration: "5:42" },
+        { id: 203, name: "Уриил", avatar: "✨", type: "входящий", status: "отвечен", time: "Вчера 12:15", duration: "12:30" }
+    ];
+
+    // Функция обновления цвета
+    function applyColor(colorCode, colorName) {
+        currentColor = colorCode;
+        currentColorName = colorName;
+        document.querySelector('.logo-icon').style.boxShadow = `0 0 12px ${colorCode}`;
+        document.querySelector('.logo-text').style.background = `linear-gradient(135deg, #FFFFFF, ${colorCode})`;
+        document.querySelector('.logo-text').style.webkitBackgroundClip = 'text';
+        const style = document.createElement('style');
+        style.id = 'dynamicColorStyle';
+        let old = document.getElementById('dynamicColorStyle');
+        if(old) old.remove();
+        style.id = 'dynamicColorStyle';
+        style.textContent = `
+            .badge, .send-btn, .chat-profile-status, .nav-item.active, .settings-group-title, .settings-value {
+                color: ${colorCode} !important;
+            }
+            .my-bubble, .send-btn, .logo-icon, .badge {
+                background: ${colorCode} !important;
+            }
+            .my-bubble { color: #0A0A0A !important; }
+            .send-btn { background: ${colorCode} !important; }
+            .input-field:focus { border-color: ${colorCode} !important; }
+            .online-dot { background: ${colorCode} !important; }
+        `;
+        document.head.appendChild(style);
+        document.getElementById('currentColorLabel').innerText = colorName;
+        renderChats();
+        if(window.currentOpenChatId) renderChatScreen(window.currentOpenChatId);
+    }
+
+    // Рендер чатов
     function renderChats() {
         const container = document.getElementById('chatsList');
-        if (!container) return;
+        if(!container) return;
         container.innerHTML = '';
         chats.forEach(chat => {
-            const lastMsgObj = messagesDB[chat.id]?.[messagesDB[chat.id].length - 1];
-            const preview = lastMsgObj ? (lastMsgObj.text.length > 35 ? lastMsgObj.text.substring(0, 32) + '...' : lastMsgObj.text) : "Нет сообщений";
-            const unreadBadge = chat.unread > 0 ? `<span class="badge">${chat.unread}</span>` : '';
-            const chatDiv = document.createElement('div');
-            chatDiv.className = 'chat-item';
-            chatDiv.setAttribute('data-id', chat.id);
-            chatDiv.innerHTML = `
-                <div class="chat-avatar">${chat.avatar}</div>
+            const lastMsg = chat.messages[chat.messages.length-1];
+            const preview = lastMsg ? (lastMsg.text.length > 35 ? lastMsg.text.substring(0,32)+'...' : lastMsg.text) : "Нет сообщений";
+            const badge = chat.unread > 0 ? `<span class="badge">${chat.unread}</span>` : '';
+            const onlineDot = chat.online ? '<div class="online-dot"></div>' : '';
+            const div = document.createElement('div');
+            div.className = 'chat-item';
+            div.onclick = () => openChat(chat.id);
+            div.innerHTML = `
+                <div class="chat-avatar">
+                    ${chat.avatar}
+                    ${onlineDot}
+                </div>
                 <div class="chat-info">
-                    <div class="chat-name">${chat.name} ${unreadBadge}</div>
+                    <div class="chat-name-row">
+                        <span class="chat-name">${chat.name} ${badge}</span>
+                        <span class="chat-time">${chat.time}</span>
+                    </div>
                     <div class="chat-preview">
                         <span>${preview}</span>
-                        <span class="chat-time">${chat.time}</span>
                     </div>
                 </div>
             `;
-            chatDiv.addEventListener('click', () => openChat(chat.id, chat.name));
-            container.appendChild(chatDiv);
+            container.appendChild(div);
+        });
+    }
+
+    // Рендер контактов
+    function renderContacts() {
+        const container = document.getElementById('contactsList');
+        if(!container) return;
+        container.innerHTML = '';
+        contacts.forEach(contact => {
+            const div = document.createElement('div');
+            div.className = 'contact-item';
+            div.onclick = () => { alert(`✨ Чат с ${contact.name} откроется в следующей версии. Пока используйте список чатов.`); };
+            div.innerHTML = `
+                <div class="contact-avatar">${contact.avatar}</div>
+                <div class="contact-name">${contact.name}</div>
+                <div class="contact-status">${contact.status}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // Рендер звонков
+    function renderCalls() {
+        const container = document.getElementById('callsList');
+        if(!container) return;
+        container.innerHTML = '';
+        calls.forEach(call => {
+            const div = document.createElement('div');
+            div.className = 'call-item';
+            div.onclick = () => { alert(`📞 Звонок ${call.name} (демо-режим)`); };
+            const statusClass = call.status === 'пропущенный' ? 'missed' : 'answered';
+            div.innerHTML = `
+                <div class="call-icon">${call.type === 'входящий' ? '📥' : '📤'}</div>
+                <div class="call-info">
+                    <div class="call-name">${call.name}</div>
+                    <div class="call-time">${call.time}</div>
+                </div>
+                <div class="call-status ${statusClass}">${call.status}</div>
+            `;
+            container.appendChild(div);
         });
     }
 
     // Открыть чат
-    function openChat(chatId, chatName) {
-        currentChatId = chatId;
-        document.getElementById('chatsScreen').style.display = 'none';
-        const chatScreen = document.getElementById('chatScreen');
-        chatScreen.style.display = 'flex';
-        document.getElementById('chatTitle').innerText = chatName;
-        renderMessages(chatId);
-        
-        // Сбрасываем unread
+    function openChat(chatId) {
+        window.currentOpenChatId = chatId;
+        renderChatScreen(chatId);
+        const container = document.getElementById('chatContainer');
+        container.style.display = 'flex';
+    }
+
+    function renderChatScreen(chatId) {
         const chat = chats.find(c => c.id === chatId);
-        if (chat && chat.unread > 0) {
-            chat.unread = 0;
-            renderChats();
-        }
-    }
-
-    // Рендер сообщений
-    function renderMessages(chatId) {
-        const container = document.getElementById('messagesArea');
-        if (!container) return;
-        const msgs = messagesDB[chatId] || [];
-        container.innerHTML = '';
-        msgs.forEach(msg => {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${msg.isMe ? 'my-message' : 'their-message'}`;
-            msgDiv.innerHTML = `
-                <div class="bubble ${msg.isMe ? 'my-bubble' : 'their-bubble'}">
-                    ${msg.text}
-                    <div class="message-time">${msg.time}</div>
+        if(!chat) return;
+        const container = document.getElementById('chatContainer');
+        container.innerHTML = `
+            <div class="chat-header">
+                <button class="back-btn" id="closeChatBtn">←</button>
+                <div class="chat-profile">
+                    <div class="chat-profile-avatar">${chat.avatar}</div>
+                    <div class="chat-profile-info">
+                        <div class="chat-profile-name">${chat.name}</div>
+                        <div class="chat-profile-status">${chat.online ? 'онлайн ✨' : 'был(а) недавно'}</div>
+                    </div>
                 </div>
-            `;
-            container.appendChild(msgDiv);
-        });
-        // Скролл вниз
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 50);
-    }
+                <div class="icon-btn" style="font-size:20px;">⋮</div>
+            </div>
+            <div class="messages-area" id="chatMessagesArea"></div>
+            <div class="input-bar">
+                <input type="text" class="input-field" id="chatMessageInput" placeholder="Divine сообщение...">
+                <button class="send-btn" id="chatSendBtn">➤</button>
+            </div>
+        `;
+        const messagesArea = document.getElementById('chatMessagesArea');
+        function renderMessages() {
+            messagesArea.innerHTML = '';
+            chat.messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${msg.isMe ? 'my-message' : 'their-message'}`;
+                msgDiv.innerHTML = `
+                    <div class="bubble ${msg.isMe ? 'my-bubble' : 'their-bubble'}">
+                        ${msg.text}
+                        <div class="message-time">${msg.time}</div>
+                    </div>
+                `;
+                messagesArea.appendChild(msgDiv);
+            });
+            setTimeout(() => messagesArea.scrollTop = messagesArea.scrollHeight, 50);
+        }
+        renderMessages();
 
-    // Отправить сообщение
-    function sendMessage() {
-        if (currentChatId === null) return;
-        const input = document.getElementById('messageInput');
-        const text = input.value.trim();
-        if (text === "") return;
-        
-        const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-        
-        const newMsg = {
-            text: text,
-            isMe: true,
-            time: timeStr
-        };
-        
-        if (!messagesDB[currentChatId]) messagesDB[currentChatId] = [];
-        messagesDB[currentChatId].push(newMsg);
-        
-        // Имитация ответа через 1-3 секунды (божественное провидение ✨)
-        renderMessages(currentChatId);
-        input.value = '';
-        
-        // Обновляем последнее сообщение в списке чатов
-        const chat = chats.find(c => c.id === currentChatId);
-        if (chat) {
+        const input = document.getElementById('chatMessageInput');
+        const sendBtn = document.getElementById('chatSendBtn');
+        const sendMessage = () => {
+            const text = input.value.trim();
+            if(!text) return;
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            chat.messages.push({ text, isMe: true, time: timeStr });
             chat.lastMessage = text;
             chat.time = timeStr;
+            chat.unread = 0;
+            renderMessages();
+            input.value = '';
             renderChats();
-        }
-        
-        // Божественный ответ (иногда)
-        const shouldReply = Math.random() > 0.55;
-        if (shouldReply) {
+
+            // Автоответ
             setTimeout(() => {
-                const divineAnswers = ["Так и есть ✨", "Божественно! 🌟", "Свет истины", "🙏 Благословляю", "Сияй, дитя", "Divine одобряет 💚", "✨ Магия кода"];
-                const randomAnswer = divineAnswers[Math.floor(Math.random() * divineAnswers.length)];
-                const answerTime = new Date();
-                const ansTimeStr = `${answerTime.getHours().toString().padStart(2,'0')}:${answerTime.getMinutes().toString().padStart(2,'0')}`;
-                const replyMsg = {
-                    text: randomAnswer,
-                    isMe: false,
-                    time: ansTimeStr
-                };
-                messagesDB[currentChatId].push(replyMsg);
-                renderMessages(currentChatId);
-                
-                // Обновляем предпросмотр и время
-                if (chat) {
-                    chat.lastMessage = randomAnswer;
-                    chat.time = ansTimeStr;
-                    renderChats();
-                }
-            }, 1200 + Math.random() * 2000);
-        }
+                const answers = ["Божественно ✨", "Сияй! 🌟", "Свет внутри", "🙏 Принято", "Divine одобряет"];
+                const answer = answers[Math.floor(Math.random() * answers.length)];
+                const ansTime = new Date();
+                const ansStr = `${ansTime.getHours().toString().padStart(2,'0')}:${ansTime.getMinutes().toString().padStart(2,'0')}`;
+                chat.messages.push({ text: answer, isMe: false, time: ansStr });
+                chat.lastMessage = answer;
+                chat.time = ansStr;
+                renderMessages();
+                renderChats();
+            }, 1500);
+        };
+        sendBtn.onclick = sendMessage;
+        input.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+        document.getElementById('closeChatBtn').onclick = () => {
+            document.getElementById('chatContainer').style.display = 'none';
+        };
     }
 
     // Навигация
-    function showChats() {
-        document.getElementById('chatScreen').style.display = 'none';
-        document.getElementById('settingsScreen').style.display = 'none';
-        document.getElementById('chatsScreen').style.display = 'flex';
-        currentChatId = null;
-        renderChats();
-    }
-    
-    function showSettings() {
-        document.getElementById('chatsScreen').style.display = 'none';
-        document.getElementById('chatScreen').style.display = 'none';
-        document.getElementById('settingsScreen').style.display = 'flex';
+    function initNavigation() {
+        const navBtns = document.querySelectorAll('.nav-item');
+        const screens = {
+            chats: document.getElementById('chatsScreen'),
+            contacts: document.getElementById('contactsScreen'),
+            calls: document.getElementById('callsScreen'),
+            settings: document.getElementById('settingsScreen')
+        };
+        navBtns.forEach(btn => {
+            btn.onclick = () => {
+                const screenName = btn.getAttribute('data-screen');
+                navBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                Object.values(screens).forEach(s => s.classList.remove('active'));
+                if(screens[screenName]) screens[screenName].classList.add('active');
+                document.getElementById('chatContainer').style.display = 'none';
+            };
+        });
     }
 
-    // Инициализация событий
-    document.getElementById('backToChats')?.addEventListener('click', showChats);
-    document.getElementById('backFromSettings')?.addEventListener('click', showChats);
-    document.getElementById('settingsBtn')?.addEventListener('click', showSettings);
-    document.getElementById('sendBtn')?.addEventListener('click', sendMessage);
-    document.getElementById('messageInput')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-    document.getElementById('newChatBtn')?.addEventListener('click', () => {
-        alert("✨ Новая божественная беседа появится в следующем обновлении. Пока сияй в существующих!");
-    });
+    // Цвет
+    function initColorPicker() {
+        const modal = document.getElementById('colorPickerModal');
+        document.getElementById('themeColorItem').onclick = () => modal.style.display = 'block';
+        document.getElementById('closeColorPicker').onclick = () => modal.style.display = 'none';
+        document.querySelectorAll('.color-option').forEach(opt => {
+            opt.onclick = () => {
+                const color = opt.getAttribute('data-code');
+                const name = opt.getAttribute('data-name');
+                applyColor(color, name);
+                modal.style.display = 'none';
+            };
+        });
+    }
 
     // Старт
     renderChats();
+    renderContacts();
+    renderCalls();
+    initNavigation();
+    initColorPicker();
+    applyColor('#00FF88', 'Зелёный');
 </script>
 </body>
 </html>
