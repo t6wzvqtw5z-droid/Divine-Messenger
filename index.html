@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Divine Messenger — мессенджер будущего</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    /* Светлая тема (по умолчанию) */
+    :root {
+      --bg-page: #f0f2f5;
+      --sidebar-bg: #ffffff;
+      --chat-bg: #ffffff;
+      --right-bg: #f9f9f9;
+      --border: #e4e6e8;
+      --text-primary: #111111;
+      --text-secondary: #65676b;
+      --hover-bg: #f0f2f5;
+      --active-bg: #e4e6e9;
+      --message-out: #e4e6eb;
+      --message-in: #0084ff;
+      --message-text-out: #050505;
+      --message-text-in: white;
+      --header-bg: #ffffff;
+      --icon-fill: #5e5e66;
+    }
+
+    /* Тёмная тема (как на фото Telegram) */
+    body.dark {
+      --bg-page: #0f0f12;
+      --sidebar-bg: #1c1c1e;
+      --chat-bg: #1c1c1e;
+      --right-bg: #1c1c1e;
+      --border: #2c2c2e;
+      --text-primary: #ffffff;
+      --text-secondary: #8e8e93;
+      --hover-bg: #2c2c2e;
+      --active-bg: #3a3a3c;
+      --message-out: #2c2c2e;
+      --message-in: #2b6bcb;
+      --message-text-out: #ffffff;
+      --message-text-in: #ffffff;
+      --header-bg: #1c1c1e;
+      --icon-fill: #8e8e93;
+    }
+
+    body {
+      background: var(--bg-page);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      background: var(--bg-page);
+    }
+
+    /* Левый сайдбар: список чатов и каналов */
+    .sidebar {
+      width: 320px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .theme-toggle, .new-chat-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--icon-fill);
+      padding: 6px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .theme-toggle:hover, .new-chat-btn:hover {
+      background: var(--hover-bg);
+    }
+
+    .search-box {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 28px;
+      border: none;
+      background: var(--hover-bg);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chats-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .chat-item:hover {
+      background: var(--hover-bg);
+    }
+
+    .chat-item.active {
+      background: var(--active-bg);
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(145deg, #6c5ce7, #a463f5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .chat-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .chat-preview {
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* Центральная область: активный чат */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--chat-bg);
+      position: relative;
+    }
+
+    .chat-header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+    }
+
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-title {
+      font-weight: 700;
+    }
+
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .message {
+      max-width: 70%;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .message-out {
+      align-self: flex-end;
+      background: var(--message-out);
+      color: var(--message-text-out);
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-in {
+      align-self: flex-start;
+      background: var(--message-in);
+      color: var(--message-text-in);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-sender {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .message-input-area {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      background: var(--chat-bg);
+    }
+
+    .message-input-area input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: var(--hover-bg);
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .send-btn {
+      background: #2b6bcb;
+      border: none;
+      color: white;
+      padding: 0 20px;
+      border-radius: 28px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Правая панель (контакты, звонки, настройки) */
+    .right-panel {
+      width: 300px;
+      background: var(--right-bg);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .tab.active {
+      color: #0084ff;
+      border-bottom: 2px solid #0084ff;
+    }
+
+    .tab-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .contact-item, .call-item, .settings-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contact-name {
+      font-weight: 500;
+    }
+
+    .contact-status {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 12px 0 6px;
+    }
+
+    @media (max-width: 800px) {
+      .right-panel { display: none; }
+      .sidebar { width: 280px; }
+    }
+    @media (max-width: 650px) {
+      .sidebar { width: 100px; }
+      .chat-info .chat-preview, .chat-time { display: none; }
+      .chat-name { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- Левый сайдбар (Чаты+Каналы) -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">✨ DIVINE</div>
+      <div style="display: flex; gap: 8px;">
+        <button class="new-chat-btn" id="newChatBtn" title="Новый чат/канал">➕</button>
+        <button class="theme-toggle" id="themeToggleBtn" title="Тёмная/светлая тема">🌙</button>
+      </div>
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="Поиск чатов, каналов..." id="searchChats">
+    </div>
+    <div class="chats-list" id="chatsList"></div>
+  </div>
+
+  <!-- Центральный чат -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="avatar" id="currentAvatar">🤍</div>
+        <div>
+          <div class="chat-title" id="currentChatTitle">Чат Домера 🎵</div>
+          <div style="font-size:12px; color: var(--text-secondary);" id="chatSubInfo">Майнкрафт Беседа</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px;">
+        <span style="cursor:pointer;" id="callBtn">📞</span>
+        <span style="cursor:pointer;" id="infoBtn">ℹ️</span>
+      </div>
+    </div>
+    <div class="messages-container" id="messagesContainer"></div>
+    <div class="message-input-area">
+      <input type="text" id="messageInput" placeholder="Сообщение...">
+      <button class="send-btn" id="sendMessageBtn">➤</button>
+    </div>
+  </div>
+
+  <!-- Правая панель: Контакты / Звонки / Настройки -->
+  <div class="right-panel">
+    <div class="tabs">
+      <div class="tab active" data-tab="contacts">Контакты</div>
+      <div class="tab" data-tab="calls">Звонки</div>
+      <div class="tab" data-tab="settings">Настройки</div>
+    </div>
+    <div class="tab-content" id="rightTabContent"></div>
+  </div>
+</div>
+
+<script>
+  // ---- ДАННЫЕ МЕССЕНДЖЕРА (каналы, чаты, сообщения)
+  const chatsData = [
+    { id: 1, name: "Чат Домера 🎵", preview: "Майнкрафт Беседа", type: "chat", lastMsg: "Привет всем!", avatar: "🎵", sub: "Активен 2 ч назад", messages: [{ from: "them", text: "Эй, заходим на сервер?", time: "10:00"},{ from: "me", text: "Давай, уже онлайн", time: "10:05"},{ from: "them", text: "Крафтим алмазы!", time: "10:08"}] },
+    { id: 2, name: "#Салатик", preview: "Хорошо", type: "channel", lastMsg: "вчера", avatar: "🥗", sub: "канал", messages: [{ from: "them", text: "Новый рецепт цезаря", time: "09:00"},{ from: "me", text: "Ого, спасибо", time: "09:15"}] },
+    { id: 3, name: "Grim gram", preview: "Пополнение квестов) КИЗЬ ЛОВЕ", type: "chat", lastMsg: "Проверь квесты", avatar: "👻", sub: "онлайн", messages: [{ from: "them", text: "Пополнение квестов)", time: "вчера"},{ from: "them", text: "КИЗЬ ЛОВЕ", time: "15:30"}] },
+    { id: 4, name: "Сценарии Grim Gram", preview: "Хеллоуин 🎧 Темное Рождество 4", type: "channel", lastMsg: "Вы: отзыв оценка", avatar: "📜", sub: "канал", messages: [{ from: "them", text: "Сценарий хеллоуина готов!", time: "12:00"}] },
+    { id: 5, name: "Тёмное рождество", preview: "Запомнить сложна", type: "channel", lastMsg: "новый эпизод", avatar: "🌙", sub: "канал", messages: [{ from: "them", text: "Лор сложный, спрашивай", time: "11:11"}] },
+    { id: 6, name: "сценарии keira", preview: "General 🎤 Лагерь тёмные воды", type: "chat", lastMsg: "Armin вступил", avatar: "🎭", sub: "актеры", messages: [{ from: "them", text: "Завтра читка", time: "19:00"}] },
+    { id: 7, name: "Актёры квестов", preview: "Сквозь тьму... solmaris", type: "chat", lastMsg: "solmaris: @Yarli", avatar: "🎬", sub: "квесты", messages: [{ from: "them", text: "Репетиция в 20:00", time: "13:20"},{ from: "me", text: "Буду", time: "13:22"}] },
+    { id: 8, name: "6 классы 🎵", preview: "ВХАХАЭПЭРЭ...", type: "chat", lastMsg: "2,6K участников", avatar: "6️⃣", sub: "школа", messages: [{ from: "them", text: "ВХАХАЭПЭРЭПЭ", time: "09:34"}] },
+  ];
+
+  // КОНТАКТЫ (как на фото)
+  const contactsData = [
+    { name: "Shannen Hodgkinson", status: "в сети", avatar: "SH" },
+    { name: "ks1shqq", status: "в сети", avatar: "K1" },
+    { name: "Метеорик 🐍", status: "в сети", avatar: "🐍" },
+    { name: "Лерыч 🐱", status: "в сети", avatar: "🐱" },
+    { name: "Диназик Уебище 🏠", status: "был(а) только что", avatar: "🏠" },
+    { name: "Elyora Potts 🏠", status: "был(а) только что", avatar: "EP" },
+    { name: "Влад 🏴‍☠️", status: "был(а) только что", avatar: "🏴" },
+    { name: "[+ soft.wxs]🛡️", status: "был(а) 1 минуту назад", avatar: "🛡️" },
+    { name: "Гонщик 🏅", status: "1 минуту назад", avatar: "🏅" },
+  ];
+
+  // Звонки (по фото)
+  const callsData = [
+    { name: "Союзница квестов", type: "Пропущенный", date: "29.04" },
+    { name: "макс деревшка 29 июля", type: "Входящий", date: "16.04" },
+    { name: "Удалённый аккаунт", type: "Пропущенный", date: "29.03" }
+  ];
+
+  let activeChatId = 1;
+  let themeDark = false;
+
+  // Вспомогательные функции
+  function renderChatsList(filter = "") {
+    const container = document.getElementById("chatsList");
+    const filtered = chatsData.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()) || c.preview.toLowerCase().includes(filter.toLowerCase()));
+    container.innerHTML = filtered.map(chat => `
+      <div class="chat-item ${activeChatId === chat.id ? 'active' : ''}" data-id="${chat.id}">
+        <div class="avatar">${chat.avatar}</div>
+        <div class="chat-info">
+          <div class="chat-name">${chat.name} ${chat.type === "channel" ? "🔊" : "💬"}</div>
+          <div class="chat-preview">${chat.preview}</div>
+        </div>
+        <div class="chat-time">${chat.lastMsg ? "сейчас" : ""}</div>
+      </div>
+    `).join("");
+    // Добавляем обработчики
+    document.querySelectorAll(".chat-item").forEach(el => {
+      el.addEventListener("click", (e) => {
+        const id = parseInt(el.dataset.id);
+        if(!isNaN(id)) setActiveChat(id);
+      });
+    });
+  }
+
+  function setActiveChat(id) {
+    activeChatId = id;
+    renderChatsList(document.getElementById("searchChats").value);
+    renderMessages();
+    const chat = chatsData.find(c => c.id === activeChatId);
+    if(chat) {
+      document.getElementById("currentChatTitle").innerText = chat.name;
+      document.getElementById("currentAvatar").innerText = chat.avatar;
+      document.getElementById("chatSubInfo").innerHTML = chat.sub || (chat.type === "channel" ? "Канал" : "Чат");
+    }
+  }
+
+  function renderMessages() {
+    const chat = chatsData.find(c => c.id === activeChatId);
+    if(!chat) return;
+    const container = document.getElementById("messagesContainer");
+    container.innerHTML = chat.messages.map(msg => `
+      <div class="message ${msg.from === "me" ? "message-out" : "message-in"}">
+        ${msg.from !== "me" ? `<div class="message-sender">${chat.name}</div>` : ""}
+        <div>${msg.text}</div>
+        <div style="font-size:10px; margin-top:4px; opacity:0.6;">${msg.time || "только что"}</div>
+      </div>
+    `).join("");
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function addMessage(text, fromMe = true) {
+    if(!text.trim()) return;
+    const chat = chatsData.find(c => c.id === activeChatId);
+    if(chat) {
+      const newMsg = { from: fromMe ? "me" : "them", text: text.trim(), time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) };
+      chat.messages.push(newMsg);
+      chat.preview = text.trim().slice(0, 30);
+      renderMessages();
+      renderChatsList(document.getElementById("searchChats").value);
+    }
+  }
+
+  // Функция для правой панели (контакты/звонки/настройки)
+  function renderRightPanel(tabId) {
+    const container = document.getElementById("rightTabContent");
+    if(tabId === "contacts") {
+      container.innerHTML = contactsData.map(c => `
+        <div class="contact-item" style="cursor:pointer;" onclick="alert('Чат с ${c.name} откроется в следующей версии ✨')">
+          <div class="avatar" style="width:42px; height:42px; font-size:16px;">${c.avatar}</div>
+          <div>
+            <div class="contact-name">${c.name}</div>
+            <div class="contact-status">${c.status}</div>
+          </div>
+        </div>
+      `).join("");
+    } 
+    else if(tabId === "calls") {
+      container.innerHTML = `
+        <div style="margin-bottom:12px;"><button id="newCallBtn" style="background:#0084ff; border:none; padding:8px; border-radius:20px; color:white; width:100%;">📞 Новый звонок</button></div>
+        <h3>НЕДАВНИЕ ЗВОНКИ</h3>
+        ${callsData.map(c => `
+          <div class="call-item">
+            <span>${c.type === "Пропущенный" ? "❌" : "📞"}</span>
+            <div><strong>${c.name}</strong><br>${c.type} · ${c.date}</div>
+          </div>
+        `).join("")}
+      `;
+      document.getElementById("newCallBtn")?.addEventListener("click", ()=>alert("🚀 Звонок в разработке, но Divine уже зовёт!"));
+    }
+    else if(tabId === "settings") {
+      container.innerHTML = `
+        <div class="settings-item" onclick="alert('Профиль Divine ✨')">
+          <span>🖼️</span> <span>Мой профиль (как @makakarak)</span>
+        </div>
+        <div class="settings-item" onclick="document.body.classList.toggle('dark'); themeDark=!themeDark; localStorage.setItem('divineTheme',themeDark?'dark':'light');">
+          <span>🌓</span> <span>Сменить тему (Telegram style)</span>
+        </div>
+        <div class="settings-item" onclick="alert('Прокси отключён, как в Telegram')">
+          <span>🔌</span> <span>Прокси: Отключён</span>
+        </div>
+        <div class="settings-item" onclick="alert('Кошелёк Divine ✨ - скоро крипта')">
+          <span>💎</span> <span>Кошелёк Divine</span>
+        </div>
+        <div class="settings-item" onclick="alert('Избранное и стикерпаки 🎀')">
+          <span>⭐</span> <span>Избранное / Смена эмодзи-статуса</span>
+        </div>
+      `;
+    }
+  }
+
+  // Инициализация вкладок правой панели
+  function initRightTabs() {
+    const tabs = document.querySelectorAll(".tab");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const tabId = tab.dataset.tab;
+        renderRightPanel(tabId);
+      });
+    });
+    renderRightPanel("contacts");
+  }
+
+  // Обработчик звонка из шапки чата
+  document.addEventListener("click", (e) => {
+    if(e.target.id === "callBtn") alert("📞 Вызов собеседника... Divine соединяет (демо-звонок)");
+    if(e.target.id === "infoBtn") alert("ℹ️ Информация о канале/чате: можно менять фото, цвет профиля, как в Telegram.");
+  });
+
+  // Отправка сообщений
+  document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
+    const input = document.getElementById("messageInput");
+    if(input.value.trim()) addMessage(input.value, true);
+    input.value = "";
+  });
+  document.getElementById("messageInput")?.addEventListener("keypress", (e) => {
+    if(e.key === "Enter") document.getElementById("sendMessageBtn").click();
+  });
+
+  // Новый чат (добавим кастом)
+  document.getElementById("newChatBtn")?.addEventListener("click", () => {
+    const newName = prompt("Название чата/канала (Divine):");
+    if(newName) {
+      const newId = Date.now();
+      chatsData.push({
+        id: newId, name: newName, preview: "Новый чат", type: "chat", lastMsg: "", avatar: "✨", sub: "только что создан", messages: [{ from: "them", text: "Добро пожаловать в Divine!", time: "сейчас"}]
+      });
+      setActiveChat(newId);
+      renderChatsList(document.getElementById("searchChats").value);
+    }
+  });
+
+  // Поиск
+  document.getElementById("searchChats")?.addEventListener("input", (e) => {
+    renderChatsList(e.target.value);
+  });
+
+  // Тёмная тема (сохраняем)
+  function loadTheme() {
+    const saved = localStorage.getItem("divineTheme");
+    if(saved === "dark") { document.body.classList.add("dark"); themeDark = true; }
+    else { document.body.classList.remove("dark"); themeDark = false; }
+  }
+  document.getElementById("themeToggleBtn")?.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    themeDark = !themeDark;
+    localStorage.setItem("divineTheme", themeDark ? "dark" : "light");
+  });
+
+  // Старт приложения
+  function init() {
+    loadTheme();
+    initRightTabs();
+    renderChatsList("");
+    setActiveChat(1);
+  }
+  init();
+</script>
+</body>
+</html>
