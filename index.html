@@ -1,1128 +1,372 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Divine Messenger — GPT Divine Bot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divine Messenger — MVP Техническая Документация и Архитектура</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #000000;
+            --tg-theme-hint-color: #707579;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #2481cc;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f4f4f5;
+            --divine-gradient: linear-gradient(135deg, #b3e5fc 0%, #e1bee7 100%);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0A0A0A;
-            height: 100vh;
-            overflow: hidden;
-            color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--tg-theme-secondary-bg-color);
+            color: var(--tg-theme-text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
         }
 
-        /* Анимированный фон */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(0,255,136,0.08) 0%, rgba(0,0,0,0) 60%);
-            pointer-events: none;
-            z-index: 0;
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: var(--tg-theme-bg-color);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
-        .app {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            background: rgba(10,10,10,0.92);
-            backdrop-filter: blur(2px);
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 0 40px rgba(0,255,136,0.1);
-        }
-
-        /* Шапка */
-        .header {
-            padding: 16px 20px;
-            background: rgba(10,10,10,0.95);
-            border-bottom: 1px solid rgba(0,255,136,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--tg-theme-secondary-bg-color);
+            padding-bottom: 30px;
+            background: var(--divine-gradient);
+            margin: -40px -40px 40px -40px;
+            padding: 60px 40px;
+            border-radius: 12px 12px 0 0;
+            color: #1a237e;
         }
 
         .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -1px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 15px;
         }
 
         .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #00FF88, #00AA55);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 0 12px rgba(0,255,136,0.5);
-            animation: glow 2s infinite;
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px rgba(0,255,136,0.3); }
-            50% { box-shadow: 0 0 15px rgba(0,255,136,0.7); }
-            100% { box-shadow: 0 0 5px rgba(0,255,136,0.3); }
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #FFFFFF, #00FF88);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .icon-btn {
-            font-size: 22px;
-            cursor: pointer;
-            color: #00FF88;
-            transition: 0.2s;
-        }
-
-        .icon-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Экраны */
-        .screen {
-            flex: 1;
-            overflow-y: auto;
-            display: none;
-            flex-direction: column;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* Список чатов (только один чат) */
-        .chats-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 0;
-        }
-
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            gap: 14px;
-            cursor: pointer;
-            transition: 0.15s;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .chat-item:active {
-            background: rgba(0,255,136,0.1);
-        }
-
-        .chat-avatar {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #1F1F1F, #2A2A2A);
+            width: 60px;
+            height: 60px;
+            background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 2rem;
         }
 
-        .online-dot {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
-            background: #00FF88;
-            border-radius: 50%;
-            border: 2px solid #0A0A0A;
+        h2 {
+            color: var(--tg-theme-link-color);
+            border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
         }
 
-        .chat-info {
-            flex: 1;
+        h3 {
+            color: #333;
+            margin-top: 25px;
         }
 
-        .chat-name-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
+        code, pre {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background: #f8f9fa;
+            border-radius: 6px;
         }
 
-        .chat-name {
-            font-size: 16px;
-            font-weight: 500;
+        code {
+            padding: 2px 6px;
+            font-size: 0.9em;
+            color: #d63384;
         }
 
-        .chat-time {
-            font-size: 11px;
-            color: #888;
+        pre {
+            padding: 15px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+            color: #212529;
         }
 
-        .chat-preview {
-            font-size: 13px;
-            color: #888;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* Экран чата */
-        .chat-screen-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10,10,10,0.98);
-            display: none;
-            flex-direction: column;
-            z-index: 20;
-        }
-
-        .chat-header {
-            padding: 12px 20px;
-            background: rgba(10,10,10,0.95);
-            border-bottom: 1px solid rgba(0,255,136,0.2);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: #00FF88;
-            font-size: 28px;
-            cursor: pointer;
-        }
-
-        .chat-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-        }
-
-        .chat-profile-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #00FF88, #00AA55);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .chat-profile-name {
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .chat-profile-status {
-            font-size: 11px;
-            color: #00FF88;
-        }
-
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .message {
-            display: flex;
-            max-width: 85%;
-            animation: fadeIn 0.2s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .my-message {
-            align-self: flex-end;
-        }
-
-        .their-message {
-            align-self: flex-start;
-        }
-
-        .bubble {
-            padding: 10px 14px;
-            border-radius: 18px;
-            font-size: 15px;
-            word-wrap: break-word;
-        }
-
-        .my-bubble {
-            background: #00FF88;
-            color: #0A0A0A;
-            border-bottom-right-radius: 4px;
-        }
-
-        .their-bubble {
-            background: #1F1F1F;
-            color: #FFFFFF;
-            border-bottom-left-radius: 4px;
-        }
-
-        .message-time {
-            font-size: 10px;
-            color: #666;
-            margin-top: 4px;
-            text-align: right;
-        }
-
-        .input-bar {
-            padding: 12px 16px;
-            background: rgba(10,10,10,0.95);
-            border-top: 1px solid rgba(0,255,136,0.2);
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .input-field {
-            flex: 1;
-            background: #1A1A1A;
-            border: 1px solid #2A2A2A;
-            border-radius: 28px;
-            padding: 12px 18px;
-            color: white;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .input-field:focus {
-            border-color: #00FF88;
-        }
-
-        .send-btn {
-            background: #00FF88;
-            border: none;
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            color: #0A0A0A;
-            transition: 0.2s;
-        }
-
-        .send-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Профиль */
-        .profile-card {
-            background: linear-gradient(135deg, #1A1A1A, #0F0F0F);
-            margin: 20px;
-            padding: 24px;
-            border-radius: 28px;
-            text-align: center;
-            border: 1px solid rgba(0,255,136,0.2);
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #00FF88, #00AA55);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 16px;
-            box-shadow: 0 0 20px rgba(0,255,136,0.3);
-        }
-
-        .profile-name {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .profile-username {
-            color: #00FF88;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        /* Поиск друзей */
-        .search-container {
-            padding: 16px;
-            background: #0A0A0A;
-        }
-
-        .search-input {
+        .endpoint-table, .plan-table {
             width: 100%;
-            padding: 12px 18px;
-            background: #1A1A1A;
-            border: 1px solid #2A2A2A;
-            border-radius: 28px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: #00FF88;
-        }
-
-        .search-result {
-            padding: 12px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-
-        .search-result:active {
-            background: rgba(0,255,136,0.1);
-        }
-
-        .result-avatar {
-            width: 44px;
-            height: 44px;
-            background: #1F1F1F;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .result-info {
-            flex: 1;
-        }
-
-        .result-name {
-            font-weight: 500;
-        }
-
-        .result-username {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .add-btn {
-            background: #00FF88;
-            color: #0A0A0A;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Настройки */
-        .settings-list {
-            padding: 0;
-        }
-
-        .settings-group {
+            border-collapse: collapse;
             margin: 20px 0;
         }
 
-        .settings-group-title {
-            padding: 8px 20px;
-            font-size: 12px;
-            color: #00FF88;
-            text-transform: uppercase;
+        .endpoint-table th, .endpoint-table td, .plan-table th, .plan-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
         }
 
-        .settings-item {
-            padding: 14px 20px;
-            background: rgba(10,10,10,0.9);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
+        .endpoint-table th, .plan-table th {
+            background-color: var(--tg-theme-secondary-bg-color);
+            font-weight: 600;
         }
 
-        .settings-item-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .settings-icon {
-            font-size: 20px;
-            width: 28px;
-        }
-
-        .settings-label {
-            font-size: 15px;
-        }
-
-        .settings-value {
-            color: #00FF88;
-            font-size: 14px;
-        }
-
-        /* Нижняя навигация */
-        .bottom-nav {
-            background: rgba(10,10,10,0.95);
-            border-top: 1px solid rgba(0,255,136,0.2);
-            display: flex;
-            padding: 8px 20px 14px;
-            justify-content: space-around;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 11px;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-
-        .nav-icon {
-            font-size: 22px;
-        }
-
-        .nav-item.active {
-            color: #00FF88;
-        }
-
-        /* Регистрация */
-        .register-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #0A0A0A;
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .register-card {
-            background: linear-gradient(135deg, #1A1A1A, #0F0F0F);
-            padding: 32px;
-            border-radius: 32px;
-            width: 100%;
-            max-width: 320px;
-            text-align: center;
-            border: 1px solid rgba(0,255,136,0.3);
-        }
-
-        .register-input {
-            width: 100%;
-            padding: 14px;
-            margin: 12px 0;
-            background: #1A1A1A;
-            border: 1px solid #2A2A2A;
-            border-radius: 28px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .register-input:focus {
-            border-color: #00FF88;
-        }
-
-        .register-btn {
-            background: #00FF88;
-            color: #0A0A0A;
-            border: none;
-            padding: 14px;
-            border-radius: 28px;
-            font-size: 16px;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 16px;
-            cursor: pointer;
-        }
-
-        .color-option {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin: 0 8px;
-            cursor: pointer;
+        .method {
             display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8em;
         }
-        .color-green { background: #00FF88; }
-        .color-blue { background: #0088FF; }
-        .color-purple { background: #9C27B0; }
-        .color-pink { background: #FF69B4; }
+
+        .method-rpc { background: #e3f2fd; color: #0d47a1; }
+        .method-post { background: #e8f5e9; color: #1b5e20; }
+
+        .badge {
+            background: var(--tg-theme-link-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+
+        .palette-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .color-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
-<div class="app" id="app">
-    <!-- Шапка -->
-    <div class="header">
+
+<div class="container">
+    <header>
         <div class="logo">
-            <div class="logo-icon">✦</div>
-            <div class="logo-text">DIVINE</div>
+            <div class="logo-icon">👼</div>
+            DIVINE
         </div>
-        <div class="header-actions">
-            <div class="icon-btn" id="searchHeaderBtn">🔍</div>
+        <p style="margin: 10px 0 0 0; font-size: 1.2rem; opacity: 0.9;">Архитектурный манифест и технический паспорт MVP мессенджера</p>
+    </header>
+
+    <!-- 1. ТЕХНИЧЕСКОЕ РЕЗЮМЕ -->
+    <section>
+        <h2>1. Техническое резюме (Technical Summary)</h2>
+        
+        <h3>Протокол и Шифрование</h3>
+        <p>Мессенджер <strong>Divine</strong> разворачивается на базе кастомной реализации бинарного протокола <strong>MTProto 2.0</strong> поверх TCP/Веб-сокетов, оптимизированного под низкую задержку (low latency). Облачные чаты защищены сквозным шифрованием на участке клиент-сервер, секретные чаты и звонки 1-1 используют чистый <strong>End-to-End (E2EE) Diffie-Hellman</strong> с генерацией ключей на устройствах пользователей.</p>
+
+        <h3>Стек технологий Бэкенда</h3>
+        <ul>
+            <li><strong>Язык разработки:</strong> Go (Golang) — высокая производительность конкурентных соединений (Goroutines).</li>
+            <li><strong>Слой хранения (Основная БД):</strong> PostgreSQL + TimescaleDB (для горизонтально масштабируемой и быстрой истории сообщений).</li>
+            <li><strong>Слой кэширования и очередей:</strong> Redis Cluster (хранение активных пользовательских сессий, кеширование состояний "онлайн", брокер очередей сообщений).</li>
+            <li><strong>Распределенное хранилище файлов:</strong> MinIO (S3-совместимое) для медиафайлов, стикеров и голосовых сообщений, прикрытое CDN.</li>
+        </ul>
+
+        <h3>Real-time звонки и обход NAT</h3>
+        <p>Голосовые и видеовызовы реализуются через стек <strong>WebRTC</strong>. Для обеспечения коннективности между клиентами в любых сетях применяется архитектура <strong>ICE (Interactive Connectivity Establishment)</strong>:</p>
+        <ul>
+            <li><strong>STUN серверы:</strong> Для определения публичных IP-адресов клиентов при прямом соединении (P2P).</li>
+            <li><strong>TURN серверы (Coturn):</strong> Если прямое P2P соединение невозможно (симметричный NAT), трафик ретранслируется через распределенные медиа-серверы с минимальной задержкой.</li>
+            <li><strong>Групповые звонки (до 30 человек):</strong> Реализуются через <strong>SFU (Selective Forwarding Unit)</strong> медиа-сервер на базе <i>LiveKit</i> или <i>Janus</i>. Клиент отправляет один поток, сервер раздает его остальным участникам, снижая нагрузку на исходящий канал спикера.</li>
+        </ul>
+
+        <h3>Авторизация и Синхронизация</h3>
+        <p>Регистрация базируется строго на телефонном номере. При входе генерируется уникальный <code>auth_key</code> устройства по протоколу DH. Если аккаунт активен на другом девайсе, RPC-запрос отправляет системный верификационный код во внутренний сервисный чат Divine. SMS шлюз (Twilio/Infobip) задействуется как fallback-метод.</p>
+    </section>
+
+    <!-- 2. ПОШАГОВЫЙ ПЛАН РАЗРАБОТКИ -->
+    <section>
+        <h2>2. Пошаговый план разработки (Sprint: 2 недели, 2 Dev + 1 QA)</h2>
+        <p><strong>Ресурсная сетка:</strong> Dev 1 (Backend/Инфраструктура), Dev 2 (Frontend/Mobile - Flutter мультиплатформа), QA (Тестирование/Автотесты).</p>
+        
+        <table class="plan-table">
+            <thead>
+                <tr>
+                    <th>Дни</th>
+                    <th>Этап / Задачи</th>
+                    <th>Ответственный</th>
+                    <th>Результат (Milestone)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>День 1-3</strong></td>
+                    <td>Развертывание инфраструктуры. Настройка БД, Redis, Coturn. Генерация базовых схем MTProto. Реализация слоя авторизации (sendCode, signIn).</td>
+                    <td>Dev 1, Dev 2</td>
+                    <td>Готов бэкенд авторизации, базовое мобильное приложение открывает экран ввода телефона.</td>
+                </tr>
+                <tr>
+                    <td><strong>День 4-6</strong></td>
+                    <td>Реализация движка облачных сообщений (транспорт через WebSockets). Синхронизация состояний чатов при входе. Локальная БД клиента (SQLite).</td>
+                    <td>Dev 1, Dev 2</td>
+                    <td>Работают текстовые сообщения 1-1, статусы доставки (одна/две галочки), форматирование текста.</td>
+                </tr>
+                <tr>
+                    <td><strong>День 7-9</strong></td>
+                    <td>Интеграция медиа-сервера (MinIO/S3). Логика групповых чатов. Реализация WebRTC пайплайна для звонков 1-1 через STUN/TURN. Логика профилей и usernames.</td>
+                    <td>Dev 1, Dev 2, QA</td>
+                    <td>Передаются фото/видео, работают звонки между двумя устройствами в локальной сети и за NAT. QA начинает смоук-тесты.</td>
+                </tr>
+                <tr>
+                    <td><strong>День 10-12</strong></td>
+                    <td>Доработка UI/UX по гайдлайнам (вкладки, кастомные темы, градиентный фон). Внедрение push-уведомлений. Оптимизация производительности (энергоэффективность).</td>
+                    <td>Dev 2, QA</td>
+                    <td>Приложение визуально идентично Telegram. Настроены пересылки, ответы, реакции и профили. Полное регрессионное тестирование.</td>
+                </tr>
+                <tr>
+                    <td><strong>День 13-14</strong></td>
+                    <td>Исправление критических багов (Bugfixing). Сборка релизных билдов под Android (APK) и iOS (TestFlight). Финальный нагрузочный тест бэкенда.</td>
+                    <td>Все роли</td>
+                    <td>MVP Divine полностью готов к закрытому бета-тесту. Развернут Web-клиент.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 3. СПИСОК API ЭНДПОИНТОВ -->
+    <section>
+        <h2>3. Протокол API: Список Эндпоинтов (RPC / HTTPS)</h2>
+        <p>Ниже представлены ключевые методы взаимодействия клиента с RPC-сервером Divine (структура аналогична схеме Telegram API TL).</p>
+        
+        <table class="endpoint-table">
+            <thead>
+                <tr>
+                    <th>Категория</th>
+                    <th>Метод (RPC / Endpoint)</th>
+                    <th>Тип</th>
+                    <th>Описание</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Auth -->
+                <tr><td>Auth</td><td><code>auth.sendCode</code></td><td><span class="method method-rpc">RPC</span></td><td>Запрос кода авторизации (в приложение или по SMS).</td></tr>
+                <tr><td>Auth</td><td><code>auth.signIn</code></td><td><span class="method method-rpc">RPC</span></td><td>Вход по коду и номеру телефона. Возвращает токен сессии.</td></tr>
+                <tr><td>Auth</td><td><code>auth.signUp</code></td><td><span class="method method-rpc">RPC</span></td><td>Регистрация нового пользователя (Имя, Фамилия).</td></tr>
+                <tr><td>Auth</td><td><code>auth.checkPassword</code></td><td><span class="method method-rpc">RPC</span></td><td>Проверка 2FA облачного пароля.</td></tr>
+                <tr><td>Auth</td><td><code>auth.logOut</code></td><td><span class="method method-rpc">RPC</span></td><td>Завершение текущей сессии и инвалидация ключа.</td></tr>
+                
+                <!-- Messages -->
+                <tr><td>Messages</td><td><code>messages.getDialogs</code></td><td><span class="method method-rpc">RPC</span></td><td>Получение списка активных чатов, каналов и архива.</td></tr>
+                <tr><td>Messages</td><td><code>messages.getHistory</code></td><td><span class="method method-rpc">RPC</span></td><td>Загрузка истории сообщений конкретного диалога (с пагинацией).</td></tr>
+                <tr><td>Messages</td><td><code>messages.sendMessage</code></td><td><span class="method method-rpc">RPC</span></td><td>Отправка текстового сообщения (поддерживает сущности форматирования).</td></tr>
+                <tr><td>Messages</td><td><code>messages.editMessage</code></td><td><span class="method method-rpc">RPC</span></td><td>Редактирование текста отправленного сообщения.</td></tr>
+                <tr><td>Messages</td><td><code>messages.deleteMessages</code></td><td><span class="method method-rpc">RPC</span></td><td>Удаление сообщений для себя или для всех участников.</td></tr>
+                <tr><td>Messages</td><td><code>messages.sendMedia</code></td><td><span class="method method-rpc">RPC</span></td><td>Отправка медиа-объекта (ID предварительно загруженного файла).</td></tr>
+                <tr><td>Messages</td><td><code>messages.sendReaction</code></td><td><span class="method method-rpc">RPC</span></td><td>Установка/изменение эмодзи-реакции на сообщение.</td></tr>
+                <tr><td>Messages</td><td><code>messages.getPeerDialogs</code></td><td><span class="method method-rpc">RPC</span></td><td>Запрос актуального статуса конкретного диалога (черновики, прочитано).</td></tr>
+                
+                <!-- Contacts -->
+                <tr><td>Contacts</td><td><code>contacts.importContacts</code></td><td><span class="method method-rpc">RPC</span></td><td>Синхронизация телефонной книги устройства с сервером.</td></tr>
+                <tr><td>Contacts</td><td><code>contacts.search</code></td><td><span class="method method-rpc">RPC</span></td><td>Глобальный поиск пользователей по <code>@username</code>.</td></tr>
+                <tr><td>Contacts</td><td><code>contacts.getStatuses</code></td><td><span class="method method-rpc">RPC</span></td><td>Получение статусов "в сети / был тогда-то" для списка контактов.</td></tr>
+                
+                <!-- Channels/Groups -->
+                <tr><td>Channels</td><td><code>channels.createChannel</code></td><td><span class="method method-rpc">RPC</span></td><td>Создание новой группы (до 200к) или супергруппы.</td></tr>
+                <tr><td>Channels</td><td><code>channels.inviteToChannel</code></td><td><span class="method method-rpc">RPC</span></td><td>Добавление участников в группу по инвайт-ссылке или ID.</td></tr>
+                <tr><td>Channels</td><td><code>channels.editAdminRights</code></td><td><span class="method method-rpc">RPC</span></td><td>Управление правами администраторов группы.</td></tr>
+                
+                <!-- Calls -->
+                <tr><td>Calls</td><td><code>phone.requestCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Инициация звонка. Возвращает параметры шифрования и STUN/TURN.</td></tr>
+                <tr><td>Calls</td><td><code>phone.acceptCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Принятие входящего вызова со стороны получателя.</td></tr>
+                <tr><td>Calls</td><td><code>phone.confirmCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Финализация обмена ключами шифрования вызова.</td></tr>
+                <tr><td>Calls</td><td><code>phone.discardCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Завершение или отклонение вызова.</td></tr>
+                
+                <!-- Account / Privacy -->
+                <tr><td>Account</td><td><code>account.updateProfile</code></td><td><span class="method method-rpc">RPC</span></td><td>Изменение имени, фамилии и блока Bio (до 140 символов).</td></tr>
+                <tr><td>Account</td><td><code>account.updateUsername</code></td><td><span class="method method-rpc">RPC</span></td><td>Резервирование уникального публичного имени <code>@username</code>.</td></tr>
+                <tr><td>Account</td><td><code>account.setPrivacy</code></td><td><span class="method method-rpc">RPC</span></td><td>Конфигурация видимости номера, фото и статуса онлайна.</td></tr>
+                <tr><td>Account</td><td><code>account.getAuthorizations</code></td><td><span class="method method-rpc">RPC</span></td><td>Получение списка всех активных сессий (устройств).</td></tr>
+                <tr><td>Account</td><td><code>account.resetAuthorization</code></td><td><span class="method method-rpc">RPC</span></td><td>Удаленный сброс (terminate) выбранной сессии.</td></tr>
+                <tr><td>Account</td><td><code>account.updatePassword</code></td><td><span class="method method-rpc">RPC</span></td><td>Установка/изменение настроек двухфакторной аутентификации (2FA).</td></tr>
+                
+                <!-- Files -->
+                <tr><td>Files</td><td><code>upload.saveFilePart</code></td><td><span class="method method-post">POST</span></td><td>Загрузка чанка файла на сервер (для больших медиа).</td></tr>
+                <tr><td>Files</td><td><code>upload.getFile</code></td><td><span class="method method-rpc">RPC</span></td><td>Скачивание файла или его превью по частям.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 4. ИНСТРУКЦИЯ ПО СБОРКЕ -->
+    <section>
+        <h2>4. Инструкция по развертыванию и сборке клиентов</h2>
+        
+        <h3>Шаг 1: Клонирование репозиториев</h3>
+        <pre><code># Клонирование монорепозитория Divine (Backend + Спецификации + Клиенты)
+git clone https://github.com/divine-messenger/divine-core.git
+cd divine-core</code></pre>
+
+        <h3>Шаг 2: Инициализация окружения бэкенда</h3>
+        <pre><code># Копирование и настройка переменных окружения
+cp .env.example .env
+
+# Запуск инфраструктуры (PostgreSQL, Redis, Coturn, MinIO) через Docker Compose
+docker-compose up -d
+
+# Сборка и запуск основного Go-сервера
+go build -o divine-server cmd/server/main.go
+./divine-server</code></pre>
+
+        <h3>Шаг 3: Сборка Мобильного клиента (Flutter-платформа)</h3>
+        <p>Перейдите в директорию клиента и соберите приложения для целевых мобильных ОС:</p>
+        <pre><code>cd apps/mobile_client
+flutter pub get
+
+# Компиляция под Android (Сборка релизного APK)
+flutter build apk --release
+
+# Компиляция под iOS (Создание архива для App Store / TestFlight)
+flutter build ipa --release</code></pre>
+    </section>
+
+    <!-- 5. ДИЗАЙН-ГАЙД -->
+    <section>
+        <h2>5. Дизайн-гайд Divine (UI/UX Спецификация)</h2>
+        <p>Интерфейс мессенджера Divine полностью воссоздает привычную эргономику Telegram, минимизируя барьер входа для пользователей, но привнося премиальную дизайн-айдентику.</p>
+
+        <h3>Фирменная цветовая палитра</h3>
+        <div class="palette-container">
+            <div class="color-card" style="background-color: #2481cc;">Divine Blue (#2481cc)<br>Основной акцент</div>
+            <div class="color-card" style="background-color: #1a237e;">Deep Divine (#1a237e)<br>Текст заголовков</div>
+            <div class="color-card" style="background-color: #b3e5fc; color: #333;">Light Aura (#b3e5fc)<br>Фон градиента 1</div>
+            <div class="color-card" style="background-color: #e1bee7; color: #333;">Lavender Mist (#e1bee7)<br>Фон градиента 2</div>
         </div>
-    </div>
 
-    <!-- Экран: Чаты (один чат с ботом) -->
-    <div id="chatsScreen" class="screen active">
-        <div class="chats-list" id="chatsList"></div>
-    </div>
+        <h3>Айдентика и Логотип</h3>
+        <blockquote>
+            <strong>Логотип «Divine»:</strong> Стилизованное минималистичное белое крыло, вписанное в идеальный круг с небесно-голубым градиентом. Геометрия линий в точности повторяет углы наклона бумажного самолетика Telegram, сохраняя преемственность скорости и легкости.
+        </blockquote>
 
-    <!-- Экран: Поиск друзей -->
-    <div id="searchScreen" class="screen">
-        <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Поиск по юзернейму... например @divine">
-        </div>
-        <div id="searchResults"></div>
-    </div>
-
-    <!-- Экран: Профиль -->
-    <div id="profileScreen" class="screen">
-        <div class="profile-card">
-            <div class="profile-avatar" id="profileAvatar">✨</div>
-            <div class="profile-name" id="profileName">Divine Soul</div>
-            <div class="profile-username" id="profileUsername">@divine</div>
-        </div>
-        <div class="settings-list">
-            <div class="settings-group">
-                <div class="settings-group-title">ИНФОРМАЦИЯ</div>
-                <div class="settings-item" id="editProfileBtn">
-                    <div class="settings-item-left">
-                        <span class="settings-icon">✏️</span>
-                        <span class="settings-label">Редактировать профиль</span>
-                    </div>
-                    <div class="settings-value">→</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Экран: Настройки -->
-    <div id="settingsScreen" class="screen">
-        <div class="settings-list">
-            <div class="settings-group">
-                <div class="settings-group-title">ВНЕШНИЙ ВИД</div>
-                <div class="settings-item" id="themeColorItem">
-                    <div class="settings-item-left">
-                        <span class="settings-icon">🎨</span>
-                        <span class="settings-label">Цвет акцента</span>
-                    </div>
-                    <div class="settings-value" id="currentColorLabel">Зелёный</div>
-                </div>
-            </div>
-            <div class="settings-group">
-                <div class="settings-group-title">БЕЗОПАСНОСТЬ</div>
-                <div class="settings-item">
-                    <div class="settings-item-left">
-                        <span class="settings-icon">🔒</span>
-                        <span class="settings-label">Сквозное шифрование</span>
-                    </div>
-                    <div class="settings-value">Включено (E2EE)</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Контейнер чата -->
-    <div id="chatContainer" class="chat-screen-container"></div>
-
-    <!-- Модалка выбора цвета -->
-    <div id="colorPickerModal" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1A1A1A; border-radius:28px 28px 0 0; padding:24px; z-index:100; max-width:500px; margin:0 auto;">
-        <div style="font-size:18px; margin-bottom:20px; text-align:center;">Выберите божественный цвет</div>
-        <div style="display:flex; justify-content:space-around; margin-bottom:20px;">
-            <div class="color-option color-green" data-color="#00FF88" data-name="Зелёный"></div>
-            <div class="color-option color-blue" data-color="#0088FF" data-name="Синий"></div>
-            <div class="color-option color-purple" data-color="#9C27B0" data-name="Фиолетовый"></div>
-            <div class="color-option color-pink" data-color="#FF69B4" data-name="Розовый"></div>
-        </div>
-        <button id="closeColorPicker" style="width:100%; padding:14px; background:#2A2A2A; border:none; color:white; border-radius:28px; font-size:16px;">Закрыть</button>
-    </div>
-
-    <!-- Регистрация -->
-    <div id="registerOverlay" class="register-overlay">
-        <div class="register-card">
-            <div class="logo-icon" style="margin:0 auto 20px;">✦</div>
-            <h2 style="margin-bottom:20px;">Divine Messenger</h2>
-            <input type="text" id="regName" class="register-input" placeholder="Ваше имя" autocomplete="off">
-            <input type="text" id="regUsername" class="register-input" placeholder="Юзернейм (латиница)" autocomplete="off">
-            <button id="registerBtn" class="register-btn">Войти в Divine</button>
-        </div>
-    </div>
-
-    <!-- Нижняя навигация -->
-    <div class="bottom-nav">
-        <button class="nav-item active" data-screen="chats">
-            <div class="nav-icon">💬</div>
-            <div>Чаты</div>
-        </button>
-        <button class="nav-item" data-screen="profile">
-            <div class="nav-icon">👤</div>
-            <div>Профиль</div>
-        </button>
-        <button class="nav-item" data-screen="settings">
-            <div class="nav-icon">⚙️</div>
-            <div>Настройки</div>
-        </button>
-    </div>
+        <h3>Дефолтное оформление чатов</h3>
+        <ul>
+            <li><strong>Задний фон по умолчанию:</strong> Мягкий бесшовный градиент от небесно-голубого (<code>#b3e5fc</code>) к нежной лаванде (<code>#e1bee7</code>) с едва заметным полупрозрачным паттерном из геометрических линий (интенсивность паттерна 4%).</li>
+            <li><strong>Расположение элементов:</strong>
+                <ul>
+                    <li>Нижний бар навигации (Mobile): 4 вкладки слева направо — <i>Контакты</i> (иконка силуэта), <i>Звонки</i> (телефонная трубка), <i>Чаты</i> (бабл чата со счетчиком непрочитанных), <i>Настройки</i> (шестеренка с миниатюрой аватара).</li>
+                    <li>Список чатов: Аватар слева (круглый), имя и превью сообщения по центру, время и статус доставки (две галочки) — справа. Нажатие на чат открывает экран переписки с сохранением нативного эффекта плавного скольжения (Slide Transition).</li>
+                </ul>
+            </li>
+        </ul>
+    </section>
 </div>
 
-<script>
-    // ========== ДАННЫЕ ==========
-    let currentColor = '#00FF88';
-    let currentColorName = 'Зелёный';
-    let currentUser = null;
-    let friends = []; // список добавленных друзей
-
-    // Бот
-    let botChat = {
-        id: 1,
-        name: "GPT Divine",
-        avatar: "🤖",
-        lastMessage: "Задай мне вопрос...",
-        time: "сейчас",
-        unread: 0,
-        online: true,
-        messages: [
-            { text: "Привет! Я GPT Divine бот. Задай мне любой вопрос ✨", isMe: false, time: "00:00" }
-        ]
-    };
-
-    // Функция получения ответа от бота (имитация GPT)
-    function getBotReply(userMessage) {
-        const lowerMsg = userMessage.toLowerCase();
-        if (lowerMsg.includes('привет') || lowerMsg.includes('здравствуй')) {
-            return "🌟 Приветствую тебя, избранный! Чем могу помочь?";
-        }
-        if (lowerMsg.includes('как дела') || lowerMsg.includes('как ты')) {
-            return "✨ У меня всё божественно! А у тебя?";
-        }
-        if (lowerMsg.includes('спасибо')) {
-            return "🙏 Пожалуйста! Сияй ярче!";
-        }
-        if (lowerMsg.includes('смысл жизни')) {
-            return "🌌 Смысл жизни — в творении, любви и свете, который ты даришь миру.";
-        }
-        if (lowerMsg.includes('бот') || lowerMsg.includes('кто ты')) {
-            return "🤖 Я GPT Divine — твой божественный ИИ-помощник.";
-        }
-        if (lowerMsg.includes('любовь')) {
-            return "💖 Любовь — это высшая энергия. Ты её достоин!";
-        }
-        if (lowerMsg.includes('смерть')) {
-            return "🌙 Смерть — лишь переход. Твоя душа вечна.";
-        }
-        if (lowerMsg.includes('деньги')) {
-            return "💰 Деньги — это энергия. Учись управлять ею с мудростью.";
-        }
-        if (lowerMsg.includes('работа')) {
-            return "💼 Найди дело, которое зажигает твоё сердце, и успех придёт.";
-        }
-        if (lowerMsg.includes('друзья')) {
-            return "👥 Настоящие друзья — это дар. Цени их!";
-        }
-        if (lowerMsg.includes('будущее')) {
-            return "🔮 Будущее зависит от твоих мыслей и действий сегодня. Созидай!";
-        }
-        // стандартный ответ
-        const answers = [
-            "Интересный вопрос... Я чувствую в этом глубокий смысл. ✨",
-            "Божественный ответ: доверься своему сердцу. 💚",
-            "Мудрость внутри тебя. Просто прислушайся. 🌙",
-            "Вселенная шепчет тебе: 'Ты на верном пути' ⭐",
-            "Сияй, дитя! Твой свет нужен этому миру. 🔥"
-        ];
-        return answers[Math.floor(Math.random() * answers.length)];
-    }
-
-    // Регистрация
-    function checkRegistration() {
-        const saved = localStorage.getItem('divine_user');
-        if (saved) {
-            currentUser = JSON.parse(saved);
-            document.getElementById('registerOverlay').style.display = 'none';
-            updateProfileUI();
-        } else {
-            document.getElementById('registerOverlay').style.display = 'flex';
-        }
-    }
-
-    function register() {
-        const name = document.getElementById('regName').value.trim();
-        let username = document.getElementById('regUsername').value.trim();
-        if (!name) {
-            alert("Введите имя");
-            return;
-        }
-        if (!username) {
-            username = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-        }
-        if (username.startsWith('@')) username = username.substring(1);
-        username = username.toLowerCase();
-        currentUser = { name: name, username: username, avatar: "✨" };
-        localStorage.setItem('divine_user', JSON.stringify(currentUser));
-        document.getElementById('registerOverlay').style.display = 'none';
-        updateProfileUI();
-        loadFriends();
-    }
-
-    function updateProfileUI() {
-        if (!currentUser) return;
-        document.getElementById('profileName').innerText = currentUser.name;
-        document.getElementById('profileUsername').innerText = '@' + currentUser.username;
-        document.getElementById('profileAvatar').innerText = currentUser.avatar || "✨";
-    }
-
-    // Друзья
-    function loadFriends() {
-        const saved = localStorage.getItem('divine_friends');
-        if (saved) {
-            friends = JSON.parse(saved);
-        } else {
-            // стартовые друзья
-            friends = [
-                { name: "Divine Angel", username: "angel", avatar: "👼" },
-                { name: "Star Walker", username: "star", avatar: "⭐" }
-            ];
-            saveFriends();
-        }
-        renderSearchResults();
-    }
-
-    function saveFriends() {
-        localStorage.setItem('divine_friends', JSON.stringify(friends));
-    }
-
-    function addFriend(username) {
-        if (!username) return;
-        const cleanUsername = username.replace('@', '').toLowerCase();
-        if (cleanUsername === currentUser.username) {
-            alert("Это вы сами!");
-            return;
-        }
-        if (friends.find(f => f.username === cleanUsername)) {
-            alert("Этот друг уже добавлен!");
-            return;
-        }
-        // имитация существующего пользователя
-        const newFriend = {
-            name: cleanUsername.charAt(0).toUpperCase() + cleanUsername.slice(1),
-            username: cleanUsername,
-            avatar: "👤"
-        };
-        friends.push(newFriend);
-        saveFriends();
-        alert(`✨ ${newFriend.name} добавлен в друзья!`);
-        renderSearchResults();
-    }
-
-    function renderSearchResults() {
-        const container = document.getElementById('searchResults');
-        if (!container) return;
-        const query = document.getElementById('searchInput')?.value.toLowerCase().replace('@', '') || '';
-        let results = [];
-        if (query.length > 0) {
-            // имитация поиска по вселенной Divine
-            const mockUsers = [
-                { name: "Luna Moon", username: "luna", avatar: "🌙" },
-                { name: "Solar King", username: "sun", avatar: "☀️" },
-                { name: "Stardust", username: "stardust", avatar: "✨" },
-                { name: "Eternal Flame", username: "flame", avatar: "🔥" },
-                { name: "Deep Soul", username: "soul", avatar: "💜" }
-            ];
-            results = mockUsers.filter(u => u.username.includes(query) || u.name.toLowerCase().includes(query));
-            // не показываем уже добавленных
-            results = results.filter(r => !friends.find(f => f.username === r.username));
-        }
-        if (results.length === 0 && query.length > 0) {
-            container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Никого не найдено :(</div>';
-        } else if (query.length === 0) {
-            container.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Введите юзернейм для поиска ✨</div>';
-        } else {
-            container.innerHTML = '';
-            results.forEach(user => {
-                const div = document.createElement('div');
-                div.className = 'search-result';
-                div.innerHTML = `
-                    <div class="result-avatar">${user.avatar}</div>
-                    <div class="result-info">
-                        <div class="result-name">${user.name}</div>
-                        <div class="result-username">@${user.username}</div>
-                    </div>
-                    <button class="add-btn" data-username="${user.username}">Добавить</button>
-                `;
-                container.appendChild(div);
-            });
-            document.querySelectorAll('.add-btn').forEach(btn => {
-                btn.onclick = (e) => {
-                    e.stopPropagation();
-                    addFriend(btn.getAttribute('data-username'));
-                };
-            });
-        }
-    }
-
-    // Рендер списка чатов (один бот + чаты с друзьями)
-    function renderChats() {
-        const container = document.getElementById('chatsList');
-        if (!container) return;
-        const allChats = [botChat, ...friends.map((f, idx) => ({
-            id: 100 + idx,
-            name: f.name,
-            avatar: f.avatar,
-            username: f.username,
-            lastMessage: "Напиши что-нибудь...",
-            time: "",
-            unread: 0,
-            online: true,
-            messages: [{ text: `✨ Твой диалог с ${f.name} начат.`, isMe: false, time: "00:00" }]
-        }))];
-        container.innerHTML = '';
-        allChats.forEach(chat => {
-            const lastMsg = chat.messages?.[chat.messages.length-1] || { text: "Нет сообщений" };
-            const preview = lastMsg.text.length > 35 ? lastMsg.text.substring(0,32)+'...' : lastMsg.text;
-            const onlineDot = chat.online ? '<div class="online-dot"></div>' : '';
-            const div = document.createElement('div');
-            div.className = 'chat-item';
-            div.onclick = () => openChat(chat);
-            div.innerHTML = `
-                <div class="chat-avatar">
-                    ${chat.avatar}
-                    ${onlineDot}
-                </div>
-                <div class="chat-info">
-                    <div class="chat-name-row">
-                        <span class="chat-name">${chat.name}</span>
-                        <span class="chat-time">${chat.time || 'сейчас'}</span>
-                    </div>
-                    <div class="chat-preview">
-                        <span>${preview}</span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    // Открыть чат (бот или друг)
-    function openChat(chat) {
-        window.currentOpenChat = chat;
-        renderChatScreen(chat);
-        document.getElementById('chatContainer').style.display = 'flex';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    }
-
-    function renderChatScreen(chat) {
-        if (!chat.messages) chat.messages = [{ text: `✨ Начни общение с ${chat.name}`, isMe: false, time: "00:00" }];
-        const container = document.getElementById('chatContainer');
-        container.innerHTML = `
-            <div class="chat-header">
-                <button class="back-btn" id="closeChatBtn">←</button>
-                <div class="chat-profile">
-                    <div class="chat-profile-avatar">${chat.avatar}</div>
-                    <div>
-                        <div class="chat-profile-name">${chat.name}</div>
-                        <div class="chat-profile-status">онлайн ✨</div>
-                    </div>
-                </div>
-            </div>
-            <div class="messages-area" id="chatMessagesArea"></div>
-            <div class="input-bar">
-                <input type="text" class="input-field" id="chatMessageInput" placeholder="Divine сообщение...">
-                <button class="send-btn" id="chatSendBtn">➤</button>
-            </div>
-        `;
-        const messagesArea = document.getElementById('chatMessagesArea');
-        function renderMessages() {
-            messagesArea.innerHTML = '';
-            chat.messages.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `message ${msg.isMe ? 'my-message' : 'their-message'}`;
-                msgDiv.innerHTML = `
-                    <div class="bubble ${msg.isMe ? 'my-bubble' : 'their-bubble'}">
-                        ${msg.text}
-                        <div class="message-time">${msg.time}</div>
-                    </div>
-                `;
-                messagesArea.appendChild(msgDiv);
-            });
-            setTimeout(() => messagesArea.scrollTop = messagesArea.scrollHeight, 50);
-        }
-        renderMessages();
-
-        const input = document.getElementById('chatMessageInput');
-        const sendBtn = document.getElementById('chatSendBtn');
-        const sendMessage = () => {
-            const text = input.value.trim();
-            if(!text) return;
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-            chat.messages.push({ text, isMe: true, time: timeStr });
-            chat.lastMessage = text;
-            chat.time = timeStr;
-            renderMessages();
-            input.value = '';
-            renderChats();
-
-            // Ответ бота или друга
-            setTimeout(() => {
-                let replyText = "";
-                if (chat.id === 1) { // бот
-                    replyText = getBotReply(text);
-                } else {
-                    const replies = ["Интересно...", "Правда? ✨", "Расскажи ещё", "Сияй!", "Договорились 💚"];
-                    replyText = replies[Math.floor(Math.random() * replies.length)];
-                }
-                const ansTime = new Date();
-                const ansStr = `${ansTime.getHours().toString().padStart(2,'0')}:${ansTime.getMinutes().toString().padStart(2,'0')}`;
-                chat.messages.push({ text: replyText, isMe: false, time: ansStr });
-                chat.lastMessage = replyText;
-                chat.time = ansStr;
-                renderMessages();
-                renderChats();
-            }, 800);
-        };
-        sendBtn.onclick = sendMessage;
-        input.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-        document.getElementById('closeChatBtn').onclick = () => {
-            document.getElementById('chatContainer').style.display = 'none';
-            document.getElementById('chatsScreen').classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.querySelector('.nav-item[data-screen="chats"]').classList.add('active');
-        };
-        setTimeout(() => input.focus(), 100);
-    }
-
-    // Навигация
-    function initNavigation() {
-        const navBtns = document.querySelectorAll('.nav-item');
-        const screens = {
-            chats: document.getElementById('chatsScreen'),
-            profile: document.getElementById('profileScreen'),
-            settings: document.getElementById('settingsScreen')
-        };
-        navBtns.forEach(btn => {
-            btn.onclick = () => {
-                const screenName = btn.getAttribute('data-screen');
-                navBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                Object.values(screens).forEach(s => s.classList.remove('active'));
-                if(screens[screenName]) screens[screenName].classList.add('active');
-                document.getElementById('chatContainer').style.display = 'none';
-                if(screenName === 'profile') updateProfileUI();
-            };
-        });
-    }
-
-    // Цвет
-    function applyColor(colorCode, colorName) {
-        currentColor = colorCode;
-        currentColorName = colorName;
-        document.querySelector('.logo-icon').style.animation = 'none';
-        document.querySelector('.logo-icon').style.background = `linear-gradient(135deg, ${colorCode}, ${colorCode}cc)`;
-        document.querySelector('.logo-icon').style.boxShadow = `0 0 12px ${colorCode}`;
-        setTimeout(() => document.querySelector('.logo-icon').style.animation = 'glow 2s infinite', 10);
-        const style = document.createElement('style');
-        style.id = 'dynamicColorStyle';
-        const old = document.getElementById('dynamicColorStyle');
-        if(old) old.remove();
-        style.id = 'dynamicColorStyle';
-        style.textContent = `
-            .send-btn, .chat-profile-status, .nav-item.active, .settings-group-title, .settings-value, .profile-username, .add-btn, .register-btn {
-                color: ${colorCode} !important;
-            }
-            .my-bubble, .send-btn, .profile-avatar, .chat-profile-avatar, .register-btn, .add-btn {
-                background: ${colorCode} !important;
-            }
-            .my-bubble { color: #0A0A0A !important; }
-            .send-btn { background: ${colorCode} !important; }
-            .input-field:focus { border-color: ${colorCode} !important; }
-            .online-dot { background: ${colorCode} !important; }
-            .chat-item:active { background: ${colorCode}20 !important; }
-        `;
-        document.head.appendChild(style);
-        document.getElementById('currentColorLabel').innerText = colorName;
-        renderChats();
-    }
-
-    function initColorPicker() {
-        const modal = document.getElementById('colorPickerModal');
-        document.getElementById('themeColorItem').onclick = () => modal.style.display = 'block';
-        document.getElementById('closeColorPicker').onclick = () => modal.style.display = 'none';
-        document.querySelectorAll('.color-option').forEach(opt => {
-            opt.onclick = () => {
-                const color = opt.getAttribute('data-color');
-                const name = opt.getAttribute('data-name');
-                applyColor(color, name);
-                modal.style.display = 'none';
-            };
-        });
-    }
-
-    // Поиск
-    document.getElementById('searchHeaderBtn').onclick = () => {
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        document.getElementById('searchScreen').classList.add('active');
-        document.getElementById('chatsScreen').classList.remove('active');
-        document.getElementById('profileScreen').classList.remove('active');
-        document.getElementById('settingsScreen').classList.remove('active');
-        document.getElementById('chatContainer').style.display = 'none';
-        document.getElementById('searchInput').value = '';
-        renderSearchResults();
-    };
-    document.getElementById('searchInput').addEventListener('input', renderSearchResults);
-    document.getElementById('editProfileBtn').onclick = () => alert('✨ Редактирование профиля будет в следующей версии!');
-
-    // Инициализация
-    checkRegistration();
-    if (!currentUser) {
-        document.getElementById('registerBtn').onclick = register;
-    } else {
-        loadFriends();
-    }
-    initNavigation();
-    initColorPicker();
-    applyColor('#00FF88', 'Зелёный');
-    renderChats();
-</script>
 </body>
 </html>
+
+```
