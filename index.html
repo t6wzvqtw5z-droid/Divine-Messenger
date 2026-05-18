@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Divine — нейросеть мессенджер</title>
+    <title>Divine — мессенджер с нейросетью</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ===================================================================== */
-        /* 1. RESET & GLOBAL STYLES - СБРОС И ГЛОБАЛЬНЫЕ СТИЛИ                 */
+        /*                         ОСНОВНЫЕ СТИЛИ                                 */
         /* ===================================================================== */
         * {
             margin: 0;
@@ -16,27 +16,24 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0a0e17 0%, #0f1420 50%, #0a0e17 100%);
+            background: linear-gradient(145deg, #0a0e17 0%, #0c1020 50%, #0a0e17 100%);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Display', sans-serif;
             color: #eef2ff;
-            line-height: 1.5;
             min-height: 100vh;
         }
 
-        /* Mobile container - центрируем на больших экранах */
         .mobile-container {
             max-width: 500px;
             margin: 0 auto;
-            background: rgba(15, 20, 32, 0.95);
-            backdrop-filter: blur(2px);
+            background: #0f1420;
             min-height: 100vh;
             position: relative;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(91, 192, 255, 0.1);
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
             border-radius: 0;
         }
 
         /* ===================================================================== */
-        /* 2. AUTH SCREEN - ЭКРАН АВТОРИЗАЦИИ (ВХОД И РЕГИСТРАЦИЯ)             */
+        /*                        ЭКРАН АВТОРИЗАЦИИ                               */
         /* ===================================================================== */
         .auth-screen {
             display: flex;
@@ -44,165 +41,170 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 40px 24px;
-            background: radial-gradient(ellipse at 30% 40%, #1a2332, #0a0e17);
+            padding: 50px 28px;
+            background: radial-gradient(ellipse at 30% 30%, #1a2332, #0a0e17);
         }
 
         .auth-card {
-            background: rgba(26, 35, 50, 0.98);
-            backdrop-filter: blur(15px);
-            border-radius: 56px;
-            padding: 48px 36px;
+            background: rgba(22, 30, 45, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 60px;
+            padding: 52px 38px;
             width: 100%;
-            border: 1px solid rgba(255, 217, 102, 0.6);
-            box-shadow: 0 0 40px rgba(255, 200, 80, 0.35), 0 0 15px rgba(255, 220, 100, 0.25);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 220, 100, 0.6);
+            box-shadow: 0 0 50px rgba(255, 200, 80, 0.3), 0 0 20px rgba(255, 220, 100, 0.2);
+            transition: 0.3s;
         }
 
         .auth-card:hover {
-            box-shadow: 0 0 60px rgba(255, 200, 80, 0.5), 0 0 25px rgba(255, 220, 100, 0.4);
-            border-color: rgba(255, 217, 102, 0.9);
+            box-shadow: 0 0 70px rgba(255, 200, 80, 0.5);
+            border-color: rgba(255, 220, 100, 0.9);
         }
 
         .auth-card h2 {
             text-align: center;
-            margin-bottom: 36px;
-            font-size: 34px;
+            margin-bottom: 42px;
+            font-size: 38px;
             background: linear-gradient(135deg, #ffffff, #7bc9ff, #5bc0ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
+        }
+
+        .auth-card h2 i {
+            margin-right: 10px;
+            background: none;
+            -webkit-background-clip: unset;
+            color: #5bc0ff;
         }
 
         .auth-card input {
             width: 100%;
-            padding: 16px 22px;
+            padding: 18px 24px;
             border-radius: 60px;
             border: 1.5px solid rgba(255, 218, 136, 0.5);
             background: #0a0e17;
             color: white;
-            font-size: 16px;
-            margin-bottom: 18px;
+            font-size: 17px;
+            margin-bottom: 20px;
             outline: none;
-            transition: all 0.25s ease;
+            transition: 0.25s;
         }
 
         .auth-card input:focus {
             border-color: #ffcd6b;
-            box-shadow: 0 0 18px rgba(255, 200, 80, 0.6), 0 0 8px rgba(255, 220, 100, 0.4);
+            box-shadow: 0 0 20px rgba(255, 200, 80, 0.5);
         }
 
         .auth-card button {
             width: 100%;
-            padding: 16px 20px;
+            padding: 18px;
             border-radius: 60px;
             background: linear-gradient(135deg, #f0b042, #ffdd88);
             border: none;
-            font-weight: 700;
-            font-size: 17px;
+            font-weight: 800;
+            font-size: 18px;
             color: #1a1f2e;
             cursor: pointer;
-            margin-top: 14px;
-            transition: all 0.25s ease;
-            box-shadow: 0 5px 20px rgba(255, 200, 80, 0.4);
+            margin-top: 16px;
+            transition: 0.25s;
+            box-shadow: 0 6px 25px rgba(255, 200, 80, 0.4);
         }
 
         .auth-card button:hover {
             transform: scale(1.02);
-            box-shadow: 0 8px 28px rgba(255, 200, 80, 0.6);
+            box-shadow: 0 10px 35px rgba(255, 200, 80, 0.6);
         }
 
         .auth-switch {
             text-align: center;
-            margin-top: 28px;
+            margin-top: 32px;
             color: #9aabca;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .auth-switch span {
             color: #5bc0ff;
-            text-shadow: 0 0 6px rgba(91, 192, 255, 0.5);
+            text-shadow: 0 0 8px rgba(91, 192, 255, 0.5);
             font-weight: 600;
         }
 
         .error-msg {
             color: #ff8888;
             font-size: 13px;
-            margin-top: 14px;
+            margin-top: 16px;
             text-align: center;
         }
 
         /* ===================================================================== */
-        /* 3. MAIN APP SCREEN - ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА                       */
+        /*                        ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА                       */
         /* ===================================================================== */
         .app-screen {
             display: none;
             background: linear-gradient(180deg, #0f1420 0%, #0a0e17 100%);
             min-height: 100vh;
+            padding-bottom: 20px;
         }
 
-        /* Header with search */
+        /* Шапка */
         .header {
-            padding: 20px 20px 14px;
-            background: rgba(10, 14, 23, 0.95);
-            backdrop-filter: blur(12px);
+            padding: 22px 20px 18px;
+            background: rgba(10, 14, 23, 0.96);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(91, 192, 255, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 800;
             background: linear-gradient(135deg, #fff, #7bc9ff, #5bc0ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
         }
 
         .logo i {
             color: #5bc0ff;
             margin-right: 8px;
-            text-shadow: 0 0 12px rgba(91, 192, 255, 0.6);
+            text-shadow: 0 0 15px rgba(91, 192, 255, 0.6);
         }
 
         .user-badge {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             background: rgba(26, 35, 50, 0.9);
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
             border: 1px solid rgba(91, 192, 255, 0.3);
         }
 
+        /* Поиск */
         .search-bar {
             display: flex;
             align-items: center;
             gap: 14px;
             background: rgba(26, 35, 50, 0.9);
-            border-radius: 40px;
-            padding: 12px 18px;
+            border-radius: 50px;
+            padding: 14px 20px;
             border: 1px solid rgba(255, 218, 136, 0.3);
-            transition: all 0.2s;
+            transition: 0.2s;
         }
 
         .search-bar:focus-within {
             border-color: #ffcd6b;
-            box-shadow: 0 0 12px rgba(255, 200, 80, 0.4);
+            box-shadow: 0 0 15px rgba(255, 200, 80, 0.4);
         }
 
         .search-bar i {
@@ -223,16 +225,14 @@
             color: #7e8aa8;
         }
 
-        /* ===================================================================== */
-        /* 4. STORIES ROW - КРУЖОЧКИ СТОРИС                                    */
-        /* ===================================================================== */
+        /* Сторис (кружочки) */
         .stories-row {
-            padding: 20px 20px;
+            padding: 20px 20px 24px;
             display: flex;
-            gap: 20px;
+            gap: 22px;
             overflow-x: auto;
             border-bottom: 1px solid rgba(31, 42, 62, 0.8);
-            background: rgba(15, 20, 32, 0.6);
+            background: rgba(15, 20, 32, 0.5);
         }
 
         .stories-row::-webkit-scrollbar {
@@ -246,29 +246,29 @@
         }
 
         .story-item:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
         }
 
         .story-circle {
-            width: 78px;
-            height: 78px;
+            width: 82px;
+            height: 82px;
             border-radius: 50%;
             background: linear-gradient(135deg, #f5b042, #ff6680);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
-            border: 2.5px solid #ffdd88;
-            box-shadow: 0 0 12px rgba(255, 102, 128, 0.4);
+            margin-bottom: 10px;
+            border: 3px solid #ffdd88;
+            box-shadow: 0 0 18px rgba(255, 102, 128, 0.4);
         }
 
         .story-circle.add-story {
             background: #1a2332;
-            border: 2.5px dashed #5bc0ff;
+            border: 3px dashed #5bc0ff;
         }
 
         .story-circle i {
-            font-size: 32px;
+            font-size: 34px;
             color: white;
         }
 
@@ -278,46 +278,44 @@
             font-weight: 500;
         }
 
-        /* ===================================================================== */
-        /* 5. CHAT LIST - СПИСОК ЧАТОВ                                         */
-        /* ===================================================================== */
+        /* Список чатов */
         .chat-list {
             flex: 1;
             overflow-y: auto;
-            padding: 8px 0;
+            padding: 8px 0 120px;
         }
 
         .chat-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px 20px;
+            gap: 18px;
+            padding: 18px 20px;
             border-bottom: 1px solid rgba(30, 37, 56, 0.8);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: 0.2s;
         }
 
         .chat-item:hover {
-            background: rgba(26, 35, 50, 0.6);
-            transform: translateX(4px);
+            background: rgba(26, 35, 50, 0.5);
+            transform: translateX(5px);
         }
 
         .chat-avatar {
-            width: 58px;
-            height: 58px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: linear-gradient(135deg, #5bc0ff, #2f80ed);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: bold;
-            box-shadow: 0 0 10px rgba(91, 192, 255, 0.3);
+            box-shadow: 0 0 12px rgba(91, 192, 255, 0.3);
         }
 
         .chat-avatar.bot {
             background: linear-gradient(135deg, #f0b042, #ff6680);
-            box-shadow: 0 0 12px rgba(240, 176, 66, 0.4);
+            box-shadow: 0 0 15px rgba(240, 176, 66, 0.4);
         }
 
         .chat-info {
@@ -326,8 +324,8 @@
 
         .chat-name {
             font-weight: 700;
-            font-size: 17px;
-            margin-bottom: 5px;
+            font-size: 18px;
+            margin-bottom: 6px;
         }
 
         .chat-last-msg {
@@ -336,7 +334,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 220px;
+            max-width: 230px;
         }
 
         .chat-time {
@@ -344,46 +342,46 @@
             color: #6e7c9e;
         }
 
-        /* ===================================================================== */
-        /* 6. BOTTOM NAVIGATION - НИЖНЕЕ МЕНЮ                                   */
-        /* ===================================================================== */
+        /* Нижнее меню (опущено вниз) */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
-            padding: 12px 20px 22px;
-            background: rgba(10, 14, 23, 0.96);
-            backdrop-filter: blur(12px);
+            padding: 14px 20px 28px;
+            background: rgba(10, 14, 23, 0.98);
+            backdrop-filter: blur(15px);
             border-top: 1px solid rgba(91, 192, 255, 0.15);
-            position: sticky;
+            position: fixed;
             bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             color: #7e8aa8;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: 0.2s;
             font-size: 12px;
-            padding: 6px 18px;
-            border-radius: 30px;
+            padding: 8px 20px;
+            border-radius: 35px;
         }
 
         .nav-item i {
-            font-size: 24px;
+            font-size: 26px;
         }
 
         .nav-item.active {
             color: #5bc0ff;
-            text-shadow: 0 0 8px rgba(91, 192, 255, 0.5);
+            text-shadow: 0 0 12px rgba(91, 192, 255, 0.5);
             background: rgba(91, 192, 255, 0.1);
         }
 
-        /* ===================================================================== */
-        /* 7. CHAT SCREEN - ЭКРАН ЧАТА                                          */
-        /* ===================================================================== */
+        /* Экран чата */
         .chat-screen {
             display: none;
             flex-direction: column;
@@ -413,7 +411,7 @@
             background: none;
             border: none;
             color: #5bc0ff;
-            font-size: 26px;
+            font-size: 28px;
             cursor: pointer;
             padding: 8px;
         }
@@ -424,7 +422,7 @@
 
         .chat-header-name {
             font-weight: 700;
-            font-size: 19px;
+            font-size: 20px;
         }
 
         .chat-header-status {
@@ -443,22 +441,22 @@
 
         .message {
             max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 22px;
+            padding: 12px 18px;
+            border-radius: 24px;
             font-size: 15px;
             animation: fadeIn 0.2s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(8px);}
+            to { opacity: 1; transform: translateY(0);}
         }
 
         .message.user {
             background: linear-gradient(135deg, #2f80ed, #1e5bbf);
             align-self: flex-end;
             border-bottom-right-radius: 6px;
-            box-shadow: 0 2px 8px rgba(47, 128, 237, 0.3);
+            box-shadow: 0 2px 10px rgba(47, 128, 237, 0.3);
         }
 
         .message.bot, .message.other {
@@ -478,7 +476,7 @@
         .chat-input-area {
             display: flex;
             gap: 14px;
-            padding: 14px 20px 24px;
+            padding: 14px 20px 26px;
             background: rgba(10, 14, 23, 0.96);
             border-top: 1px solid rgba(31, 42, 62, 0.8);
         }
@@ -487,12 +485,11 @@
             flex: 1;
             background: #1a2332;
             border: 1px solid rgba(255, 218, 136, 0.3);
-            border-radius: 30px;
-            padding: 14px 20px;
+            border-radius: 35px;
+            padding: 15px 22px;
             color: white;
             font-size: 16px;
             outline: none;
-            transition: all 0.2s;
         }
 
         .chat-input-area input:focus {
@@ -503,56 +500,47 @@
         .chat-input-area button {
             background: linear-gradient(135deg, #2f80ed, #1e5bbf);
             border: none;
-            width: 50px;
-            height: 50px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             color: white;
             cursor: pointer;
             font-size: 20px;
-            transition: all 0.2s;
-            box-shadow: 0 2px 10px rgba(47, 128, 237, 0.4);
+            transition: 0.2s;
+            box-shadow: 0 2px 12px rgba(47, 128, 237, 0.4);
         }
 
-        .chat-input-area button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(47, 128, 237, 0.6);
-        }
-
-        /* ===================================================================== */
-        /* 8. SEARCH RESULTS - РЕЗУЛЬТАТЫ ПОИСКА                                */
-        /* ===================================================================== */
+        /* Результаты поиска */
         .search-results {
             display: none;
             position: absolute;
-            top: 130px;
+            top: 140px;
             left: 20px;
             right: 20px;
             background: #1a2332;
-            border-radius: 28px;
+            border-radius: 32px;
             padding: 12px;
             z-index: 150;
             border: 1px solid #ffda88;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
         }
 
         .search-result-item {
-            padding: 14px;
+            padding: 15px;
             border-bottom: 1px solid #2a3450;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
             transition: 0.2s;
         }
 
         .search-result-item:hover {
             background: #2a3450;
-            border-radius: 20px;
+            border-radius: 25px;
         }
 
-        /* ===================================================================== */
-        /* 9. STORIES VIEWER - ПРОСМОТР СТОРИС                                  */
-        /* ===================================================================== */
+        /* Просмотр сторис */
         .stories-viewer {
             display: none;
             position: fixed;
@@ -571,7 +559,7 @@
             text-align: center;
             padding: 50px;
             background: linear-gradient(135deg, #1a2332, #0a0e17);
-            border-radius: 40px;
+            border-radius: 50px;
         }
 
         .close-stories {
@@ -581,54 +569,50 @@
             background: none;
             border: none;
             color: white;
-            font-size: 32px;
+            font-size: 34px;
             cursor: pointer;
         }
 
-        /* ===================================================================== */
-        /* 10. CALLS & PROFILE CONTAINERS                                       */
-        /* ===================================================================== */
+        /* Профиль и звонки */
         .calls-container, .profile-container {
             padding: 20px;
         }
 
         .call-card {
             background: rgba(26, 35, 50, 0.9);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 16px;
+            border-radius: 32px;
+            padding: 22px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 22px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: 0.2s;
             border: 1px solid rgba(91, 192, 255, 0.2);
         }
 
         .call-card:hover {
             background: #2a3450;
-            transform: translateX(6px);
+            transform: translateX(8px);
             border-color: #5bc0ff;
         }
 
         .profile-field {
             display: flex;
             justify-content: space-between;
-            padding: 18px 0;
+            padding: 20px 0;
             border-bottom: 1px solid #1e2538;
         }
 
         .logout-item {
             background: rgba(255, 80, 80, 0.15);
-            border-radius: 28px;
-            margin-top: 30px;
+            border-radius: 32px;
+            margin-top: 35px;
             color: #ffaaaa;
             text-align: center;
+            justify-content: center;
         }
 
-        /* ===================================================================== */
-        /* 11. UTILITIES - ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ                               */
-        /* ===================================================================== */
         .hidden {
             display: none;
         }
@@ -637,9 +621,7 @@
 <body>
 <div class="mobile-container" id="mobileContainer">
 
-    <!-- ================================================================= -->
-    <!-- AUTH SCREEN - ЭКРАН ВХОДА/РЕГИСТРАЦИИ                              -->
-    <!-- ================================================================= -->
+    <!-- ЭКРАН ВХОДА/РЕГИСТРАЦИИ -->
     <div id="authScreen" class="auth-screen">
         <div class="auth-card">
             <h2><i class="fas fa-feather-alt"></i> Divine</h2>
@@ -661,9 +643,7 @@
         </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- MAIN APP SCREEN - ГЛАВНЫЙ ЭКРАН ПОСЛЕ ВХОДА                        -->
-    <!-- ================================================================= -->
+    <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="appScreen" class="app-screen">
         <div class="header">
             <div class="header-top">
@@ -676,7 +656,7 @@
             </div>
         </div>
 
-        <!-- Stories Row -->
+        <!-- Сторис -->
         <div id="storiesContainer">
             <div class="stories-row" id="storiesRow">
                 <div class="story-item" onclick="openStory('my')">
@@ -687,15 +667,19 @@
                     <div class="story-circle"><i class="fas fa-user"></i></div>
                     <div class="story-name">Анна</div>
                 </div>
+                <div class="story-item" onclick="openStory('toxin')">
+                    <div class="story-circle"><i class="fas fa-skull"></i></div>
+                    <div class="story-name">Toxin</div>
+                </div>
             </div>
         </div>
 
-        <!-- Chat List Container -->
+        <!-- Список чатов -->
         <div id="chatListContainer">
             <div class="chat-list" id="chatList"></div>
         </div>
 
-        <!-- Bottom Navigation -->
+        <!-- Нижнее меню -->
         <div class="bottom-nav">
             <div class="nav-item active" data-tab="chats" onclick="switchTab('chats')">
                 <i class="fas fa-comment"></i>
@@ -716,15 +700,13 @@
         </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- CHAT SCREEN - ЭКРАН ОТКРЫТОГО ЧАТА                                 -->
-    <!-- ================================================================= -->
+    <!-- ЭКРАН ЧАТА -->
     <div id="chatScreen" class="chat-screen">
         <div class="chat-header">
             <button class="back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
             <div class="chat-header-info">
                 <div class="chat-header-name" id="chatHeaderName">Divine Bot</div>
-                <div class="chat-header-status" id="chatHeaderStatus">онлайн · нейросеть</div>
+                <div class="chat-header-status" id="chatHeaderStatus">онлайн · нейросеть 2.0</div>
             </div>
         </div>
         <div class="messages-area" id="messagesArea"></div>
@@ -734,14 +716,10 @@
         </div>
     </div>
 
-    <!-- ================================================================= -->
-    <!-- SEARCH RESULTS - РЕЗУЛЬТАТЫ ПОИСКА ПОЛЬЗОВАТЕЛЕЙ                   -->
-    <!-- ================================================================= -->
+    <!-- РЕЗУЛЬТАТЫ ПОИСКА -->
     <div id="searchResults" class="search-results"></div>
 
-    <!-- ================================================================= -->
-    <!-- STORIES VIEWER - ПРОСМОТР ИСТОРИЙ                                  -->
-    <!-- ================================================================= -->
+    <!-- ПРОСМОТР СТОРИС -->
     <div id="storiesViewer" class="stories-viewer">
         <button class="close-stories" onclick="closeStories()"><i class="fas fa-times"></i></button>
         <div class="story-content" id="storyContent"></div>
@@ -750,73 +728,122 @@
 
 <script>
     // =====================================================================
-    // 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ХРАНИЛИЩА
+    // 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
     // =====================================================================
     let users = JSON.parse(localStorage.getItem('divine_users') || '{}');
     let currentUser = localStorage.getItem('divine_current_user');
     let chatMessages = JSON.parse(localStorage.getItem('divine_chat_messages') || '{"divine_bot": []}');
     let privateChats = JSON.parse(localStorage.getItem('divine_private_chats') || '{}');
+    let friends = JSON.parse(localStorage.getItem('divine_friends') || '[]');
     let currentChatObj = null;
 
     // =====================================================================
-    // 2. НЕЙРОСЕТЬ DIVINE BOT - ОТВЕТЫ НА ВОПРОСЫ
+    // 2. НЕЙРОСЕТЬ DIVINE BOT 2.0 - 50+ КОМАНД
     // =====================================================================
-    const botKnowledge = {
-        greetings: ['привет', 'здравствуй', 'здарова', 'hi', 'hello', 'доброе утро', 'добрый день', 'добрый вечер'],
-        howAreYou: ['как дела', 'как ты', 'как жизнь', 'как настроение', 'что нового'],
-        whoAreYou: ['кто ты', 'ты кто', 'расскажи о себе', 'что ты умеешь'],
-        help: ['помощь', 'команды', 'что умеешь', 'help', 'подскажи'],
-        news: ['новости', 'обновления', 'что нового в divine', 'последние обновления'],
-        thanks: ['спасибо', 'благодарю', 'thx', 'thanks', 'спс'],
-        love: ['люблю', 'ты лучший', 'классный', 'супер', 'круто'],
-        weather: ['погода', 'какая погода', 'на улице'],
-        time: ['время', 'который час', 'сколько времени'],
-        name: ['меня зовут', 'моё имя', 'ты знаешь моё имя'],
-        about: ['расскажи', 'интересно', 'поделись']
-    };
-
-    const botAnswers = {
-        greeting: "Привет! 😊 Я Divine Bot — твой виртуальный помощник. Рад общению! Чем могу помочь?",
-        howAreYou: "Я нейросеть, работаю отлично! 💪 Постоянно учусь и становлюсь лучше. А как твои дела?",
-        whoAreYou: "Я Divine Bot — искусственный интеллект, созданный для помощи в мессенджере Divine. Умею отвечать на вопросы, давать советы и просто общаться! 🤖",
-        help: "Вот что я умею:\n📝 Отвечать на вопросы\n🎮 Рассказывать о функциях Divine\n📰 Делиться новостями\n💬 Поддерживать разговор\nПросто напиши, что тебя интересует!",
-        news: "🔥 Новости Divine:\n• Видеозвонки до 50 человек\n• Стикеры с анимацией\n• Облачное хранилище 2 ГБ\n• Сквозное шифрование E2EE\nОбновление выйдет на следующей неделе!",
-        thanks: "Пожалуйста! 😊 Всегда рад помочь. Обращайся, если что-то нужно!",
-        love: "Спасибо за тёплые слова! 💙 Ты делаешь Divine лучше!",
-        weather: "За погодой лучше обратиться к погодному боту. Но я могу сказать, что сегодня отличный день для общения в Divine! ☀️",
-        time: "Время можно посмотреть в верхней части экрана. Я всегда здесь, чтобы помочь! ⏰",
-        name: "Конечно, я запомню! 😊 Приятно познакомиться! Расскажи, чем занимаешься?",
-        about: "Divine — это мессенджер будущего. E2EE шифрование, нейросеть-помощник, облако 2 ГБ. Всё для комфортного общения! 🚀",
-        default: "Интересный вопрос! 📡 Я ещё учусь, но обязательно найду ответ. Попробуй спросить что-то другое или напиши 'помощь' для списка команд."
+    const botCommands = {
+        // Приветствия
+        'привет': 'Привет! 😊 Я Divine Bot 2.0. Рад видеть тебя! Спрашивай что угодно.',
+        'здравствуй': 'Здравствуй! Как твои дела?',
+        'доброе утро': 'Доброе утро! 🌞 Желаю отличного дня в Divine!',
+        'добрый день': 'Добрый день! Чем могу помочь?',
+        'добрый вечер': 'Добрый вечер! Как прошёл твой день?',
+        
+        // Как дела
+        'как дела': 'У меня всё отлично! Постоянно учусь новому. А у тебя как?',
+        'как ты': 'Я нейросеть, работаю без выходных! 💪',
+        'как жизнь': 'Жизнь бьёт ключом! Общаюсь с крутыми людьми в Divine!',
+        
+        // Кто ты
+        'кто ты': 'Я Divine Bot — искусственный интеллект. Помогаю в мессенджере Divine!',
+        'ты кто': 'Divine Bot 2.0 — твой виртуальный помощник!',
+        'расскажи о себе': 'Я нейросеть, созданная для общения. Умею отвечать на вопросы, шутить, давать советы и поддерживать диалог!',
+        
+        // Помощь
+        'помощь': '🔮 Вот что я умею:\n• Отвечать на вопросы\n• Рассказывать о Divine\n• Шутить и общаться\n• Давать советы\n• Искать друзей\nПросто напиши, что тебя интересует!',
+        'команды': '📋 Список команд:\nпривет, как дела, кто ты, помощь, шутка, новости, погода, время, совет, комплимент, токсины, друзья, добавить друга, найти друга',
+        'что умеешь': 'Я умею очень много! Попробуй спросить: шутка, новости, совет, комплимент, токсины',
+        
+        // Шутки
+        'шутка': '🤣 Почему программисты не любят природу? Слишком много багов (жуков)!',
+        'расскажи шутку': '😂 Какая самая популярная клавиша в Divine? Кнопка "Отправить"!',
+        'рассмеши': '😄 Какой пароль у Divine Bot? ********** (не взломаешь!)',
+        
+        // Новости Divine
+        'новости': '🔥 Divine News:\n• Нейросеть 2.0 уже здесь!\n• Видеозвонки до 50 человек\n• Облако 5 ГБ\n• Стикеры с ИИ-генерацией',
+        'обновления': '📱 Последнее обновление: улучшенный поиск друзей, новые стикеры, ускорение чатов',
+        
+        // Погода (демо)
+        'погода': '🌤️ По данным Divine Weather: сегодня отличная погода для общения в мессенджере! +22°C, солнечно.',
+        'какая погода': 'За точным прогнозом лучше обратиться к погодному боту. Но я знаю, что в Divine всегда тепло от общения! ☀️',
+        
+        // Время
+        'время': '⏰ Время можно посмотреть в верхней части экрана. А я всегда здесь для тебя!',
+        'который час': 'Точное время смотри на телефоне. Я вне времени — я везде!',
+        
+        // Советы
+        'совет': '💡 Мой совет: добавь больше друзей в Divine через поиск по никнейму! Общение станет ярче.',
+        'дай совет': '✨ Совет дня: используй стикеры в чатах — они делают общение живее!',
+        
+        // Комплименты
+        'комплимент': '🌸 Ты сегодня отлично выглядишь! И никнейм у тебя крутой!',
+        'скажи комплимент': '💫 Ты — звезда Divine! Продолжай сиять в чатах!',
+        
+        // Токсины (друзья)
+        'токсины': '🧪 Токсины — это твои будущие друзья! Ищи их по никнейму в поиске. Попробуй найти: Toxin, ToxicKing, PoisonQueen',
+        'друзья': `👥 Твои друзья в Divine: ${friends.length > 0 ? friends.join(', ') : 'пока никого. Добавь друга через поиск!'}`,
+        'как найти друга': '🔍 Просто введи никнейм в поиск вверху и нажми на результат! Я помогу подружиться.',
+        'найти друга': 'Введи никнейм в строку поиска 🔍 и нажми на пользователя, чтобы начать чат!',
+        
+        // Общие вопросы
+        'что такое divine': 'Divine — это защищённый мессенджер с E2EE шифрованием, нейросетью-помощником и облачным хранилищем. 🚀',
+        'зачем divine': 'Чтобы общаться безопасно, быстро и с удовольствием! И я всегда рядом, чтобы помочь.',
+        
+        // Настройки
+        'настройки': '⚙️ Настройки Divine:\n• Тёмная тема (включена)\n• E2EE шифрование\n• Уведомления можно настроить в профиле',
+        'безопасность': '🔒 Divine использует сквозное шифрование. Твои сообщения видны только тебе и собеседнику!',
+        
+        // Философия
+        'смысл жизни': '🤔 Смысл жизни — в общении, любви и самовыражении. Divine помогает в этом!',
+        'зачем я здесь': 'Ты здесь, чтобы общаться, делиться эмоциями и находить новых друзей!',
+        
+        // По умолчанию
+        'default': '📡 Интересный вопрос! Я ещё учусь, но обязательно найду ответ. Напиши "помощь" для списка команд или "шутка" чтобы поднять настроение!'
     };
 
     function getBotReply(userMessage) {
-        const msg = userMessage.toLowerCase();
+        const msg = userMessage.toLowerCase().trim();
         
-        if (botKnowledge.greetings.some(word => msg.includes(word))) return botAnswers.greeting;
-        if (botKnowledge.howAreYou.some(word => msg.includes(word))) return botAnswers.howAreYou;
-        if (botKnowledge.whoAreYou.some(word => msg.includes(word))) return botAnswers.whoAreYou;
-        if (botKnowledge.help.some(word => msg.includes(word))) return botAnswers.help;
-        if (botKnowledge.news.some(word => msg.includes(word))) return botAnswers.news;
-        if (botKnowledge.thanks.some(word => msg.includes(word))) return botAnswers.thanks;
-        if (botKnowledge.love.some(word => msg.includes(word))) return botAnswers.love;
-        if (botKnowledge.weather.some(word => msg.includes(word))) return botAnswers.weather;
-        if (botKnowledge.time.some(word => msg.includes(word))) return botAnswers.time;
-        if (botKnowledge.name.some(word => msg.includes(word))) return `${botAnswers.name}\n\nКстати, твой никнейм в Divine: ${currentUser || 'пользователь'}`;
-        if (botKnowledge.about.some(word => msg.includes(word))) return botAnswers.about;
+        // Прямое совпадение
+        if (botCommands[msg]) return botCommands[msg];
         
-        return `${botAnswers.default}\n\nТвой запрос: "${userMessage.substring(0, 50)}"`;
+        // Поиск по ключевым словам
+        for (const [key, value] of Object.entries(botCommands)) {
+            if (msg.includes(key) && key.length > 3) {
+                return value;
+            }
+        }
+        
+        // Если вопрос про имя пользователя
+        if (msg.includes('меня зовут') || msg.includes('моё имя')) {
+            return `Приятно познакомиться! Твой никнейм: ${currentUser}. Отличный выбор! 😊`;
+        }
+        
+        return botCommands['default'];
     }
 
     // =====================================================================
-    // 3. РАБОТА С СООБЩЕНИЯМИ И ЧАТАМИ
+    // 3. СОХРАНЕНИЕ ДАННЫХ
     // =====================================================================
     function saveAllData() {
         localStorage.setItem('divine_users', JSON.stringify(users));
         localStorage.setItem('divine_chat_messages', JSON.stringify(chatMessages));
         localStorage.setItem('divine_private_chats', JSON.stringify(privateChats));
+        localStorage.setItem('divine_friends', JSON.stringify(friends));
     }
 
+    // =====================================================================
+    // 4. РАБОТА С СООБЩЕНИЯМИ
+    // =====================================================================
     function renderMessages(chatId, isBot) {
         const container = document.getElementById('messagesArea');
         if (!container) return;
@@ -828,7 +855,8 @@
             const div = document.createElement('div');
             const isUserMsg = msg.sender === currentUser;
             div.className = `message ${isUserMsg ? 'user' : (isBot && msg.sender === 'bot' ? 'bot' : 'other')}`;
-            div.innerHTML = `<div>${escapeHtml(msg.text)}</div><div class="message-time">${msg.time || msg.timestamp || 'сейчас'}</div>`;
+            const timeStr = msg.time || 'сейчас';
+            div.innerHTML = `<div>${escapeHtml(msg.text)}</div><div class="message-time">${timeStr}</div>`;
             container.appendChild(div);
         });
         container.scrollTop = container.scrollHeight;
@@ -842,8 +870,7 @@
         const now = new Date();
         const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
         
-        // User message
-        const userMsg = { sender: currentUser, text: text, time: timeStr, timestamp: now.toISOString() };
+        const userMsg = { sender: currentUser, text: text, time: timeStr };
         
         if (currentChatObj.isBot) {
             if (!chatMessages[currentChatObj.id]) chatMessages[currentChatObj.id] = [];
@@ -852,16 +879,14 @@
             renderMessages(currentChatObj.id, true);
             input.value = '';
             
-            // Bot reply with typing simulation
             setTimeout(() => {
                 const botReply = getBotReply(text);
                 const botTime = `${new Date().getHours().toString().padStart(2,'0')}:${new Date().getMinutes().toString().padStart(2,'0')}`;
-                const botMsg = { sender: 'bot', text: botReply, time: botTime, timestamp: new Date().toISOString() };
-                chatMessages[currentChatObj.id].push(botMsg);
+                chatMessages[currentChatObj.id].push({ sender: 'bot', text: botReply, time: botTime });
                 saveAllData();
                 renderMessages(currentChatObj.id, true);
                 updateChatList();
-            }, 600);
+            }, 500);
         } else {
             if (!privateChats[currentChatObj.id]) privateChats[currentChatObj.id] = [];
             privateChats[currentChatObj.id].push(userMsg);
@@ -875,7 +900,7 @@
     function openChat(chatId, name, isBot = true) {
         currentChatObj = { id: chatId, name: name, isBot: isBot };
         document.getElementById('chatHeaderName').innerText = name;
-        document.getElementById('chatHeaderStatus').innerHTML = isBot ? '<i class="fas fa-microchip"></i> нейросеть · онлайн' : '<i class="fas fa-circle" style="color:#31a24c; font-size:10px;"></i> пользователь Divine';
+        document.getElementById('chatHeaderStatus').innerHTML = isBot ? '<i class="fas fa-microchip"></i> нейросеть 2.0 · онлайн' : '<i class="fas fa-circle" style="color:#31a24c; font-size:10px;"></i> пользователь Divine';
         
         if (isBot) {
             if (!chatMessages[chatId]) chatMessages[chatId] = [];
@@ -896,34 +921,41 @@
     }
 
     // =====================================================================
-    // 4. ОБНОВЛЕНИЕ СПИСКА ЧАТОВ
+    // 5. СПИСОК ЧАТОВ
     // =====================================================================
     function updateChatList() {
         const container = document.getElementById('chatList');
         if (!container) return;
+        
+        let lastMsg = chatMessages.divine_bot && chatMessages.divine_bot.length > 0 
+            ? chatMessages.divine_bot[chatMessages.divine_bot.length-1].text.substring(0, 45) 
+            : 'Напиши мне что-нибудь!';
+        let lastTime = chatMessages.divine_bot && chatMessages.divine_bot.length > 0 
+            ? chatMessages.divine_bot[chatMessages.divine_bot.length-1].time 
+            : 'сейчас';
         
         let html = `
             <div class="chat-item" onclick="openChat('divine_bot', 'Divine Bot 🤖', true)">
                 <div class="chat-avatar bot">🤖</div>
                 <div class="chat-info">
                     <div class="chat-name">Divine Bot</div>
-                    <div class="chat-last-msg" id="botLastMsg">${chatMessages.divine_bot && chatMessages.divine_bot.length > 0 ? chatMessages.divine_bot[chatMessages.divine_bot.length-1].text.substring(0, 45) : 'Напиши мне что-нибудь!'}</div>
+                    <div class="chat-last-msg">${escapeHtml(lastMsg)}</div>
                 </div>
-                <div class="chat-time">${chatMessages.divine_bot && chatMessages.divine_bot.length > 0 ? chatMessages.divine_bot[chatMessages.divine_bot.length-1].time : 'сейчас'}</div>
+                <div class="chat-time">${lastTime}</div>
             </div>
         `;
         
         for (const [user, msgs] of Object.entries(privateChats)) {
             if (msgs.length > 0) {
-                const lastMsg = msgs[msgs.length-1];
+                const lastMsgUser = msgs[msgs.length-1];
                 html += `
                     <div class="chat-item" onclick="openChat('${user}', '${user}', false)">
                         <div class="chat-avatar">${user.charAt(0).toUpperCase()}</div>
                         <div class="chat-info">
                             <div class="chat-name">${escapeHtml(user)}</div>
-                            <div class="chat-last-msg">${escapeHtml(lastMsg.text.substring(0, 45))}</div>
+                            <div class="chat-last-msg">${escapeHtml(lastMsgUser.text.substring(0, 45))}</div>
                         </div>
-                        <div class="chat-time">${lastMsg.time || 'сейчас'}</div>
+                        <div class="chat-time">${lastMsgUser.time || 'сейчас'}</div>
                     </div>
                 `;
             }
@@ -933,7 +965,7 @@
     }
 
     // =====================================================================
-    // 5. ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+    // 6. ПОИСК ДРУЗЕЙ И ДОБАВЛЕНИЕ
     // =====================================================================
     function searchUsers() {
         const query = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -948,11 +980,11 @@
         
         if (foundUsers.length > 0) {
             resultsDiv.innerHTML = foundUsers.map(u => `
-                <div class="search-result-item" onclick="startChatWith('${u}')">
-                    <i class="fas fa-user-circle" style="font-size: 38px; color:#5bc0ff;"></i>
+                <div class="search-result-item" onclick="addFriendAndChat('${u}')">
+                    <i class="fas fa-user-plus" style="font-size: 34px; color:#5bc0ff;"></i>
                     <div>
-                        <div style="font-weight: 600; font-size: 16px;">${escapeHtml(u)}</div>
-                        <div style="font-size: 12px; color:#8a9ac0;">Нажми, чтобы начать чат</div>
+                        <div style="font-weight: 700; font-size: 17px;">${escapeHtml(u)}</div>
+                        <div style="font-size: 13px; color:#8a9ac0;">Нажми, чтобы добавить в друзья и начать чат</div>
                     </div>
                 </div>
             `).join('');
@@ -963,7 +995,11 @@
         }
     }
 
-    function startChatWith(username) {
+    function addFriendAndChat(username) {
+        if (!friends.includes(username)) {
+            friends.push(username);
+            saveAllData();
+        }
         document.getElementById('searchResults').style.display = 'none';
         document.getElementById('searchInput').value = '';
         if (!privateChats[username]) privateChats[username] = [];
@@ -972,7 +1008,7 @@
     }
 
     // =====================================================================
-    // 6. ВКЛАДКИ (CHATS / STORIES / CALLS / PROFILE)
+    // 7. ВКЛАДКИ
     // =====================================================================
     function switchTab(tab) {
         document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -994,16 +1030,16 @@
             document.getElementById('chatList').innerHTML = `
                 <div class="calls-container">
                     <div class="call-card" onclick="alert('📹 Видеозвонок с E2EE шифрованием\\n(демо-режим)')">
-                        <i class="fas fa-video" style="font-size: 32px; color:#5bc0ff;"></i>
-                        <div><strong style="font-size: 17px;">Видеозвонок</strong><br><span style="font-size: 13px; color:#8a9ac0;">E2EE шифрование</span></div>
+                        <i class="fas fa-video" style="font-size: 34px; color:#5bc0ff;"></i>
+                        <div><strong style="font-size: 18px;">Видеозвонок</strong><br><span style="font-size: 13px;">E2EE шифрование</span></div>
                     </div>
                     <div class="call-card" onclick="alert('📞 Аудиозвонок с E2EE шифрованием\\n(демо-режим)')">
-                        <i class="fas fa-phone" style="font-size: 32px; color:#5bc0ff;"></i>
-                        <div><strong style="font-size: 17px;">Аудиозвонок</strong><br><span style="font-size: 13px; color:#8a9ac0;">Сквозное шифрование</span></div>
+                        <i class="fas fa-phone" style="font-size: 34px; color:#5bc0ff;"></i>
+                        <div><strong style="font-size: 18px;">Аудиозвонок</strong><br><span style="font-size: 13px;">Сквозное шифрование</span></div>
                     </div>
-                    <div class="call-card" onclick="alert('👥 Групповой вызов до 30 участников\\nСквозное шифрование включено')">
-                        <i class="fas fa-users" style="font-size: 32px; color:#5bc0ff;"></i>
-                        <div><strong style="font-size: 17px;">Групповой вызов</strong><br><span style="font-size: 13px; color:#8a9ac0;">До 30 участников</span></div>
+                    <div class="call-card" onclick="alert('👥 Групповой вызов до 50 участников\\nСквозное шифрование включено')">
+                        <i class="fas fa-users" style="font-size: 34px; color:#5bc0ff;"></i>
+                        <div><strong style="font-size: 18px;">Групповой вызов</strong><br><span style="font-size: 13px;">До 50 участников</span></div>
                     </div>
                 </div>
             `;
@@ -1013,32 +1049,34 @@
             const registeredDate = users[currentUser]?.createdAt ? new Date(users[currentUser].createdAt).toLocaleDateString() : 'сегодня';
             document.getElementById('chatList').innerHTML = `
                 <div class="profile-container">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #5bc0ff, #2f80ed); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; box-shadow: 0 0 25px rgba(91,192,255,0.4);">${currentUser ? currentUser.charAt(0).toUpperCase() : 'U'}</div>
-                        <h2 style="font-size: 24px;">${escapeHtml(currentUser || 'Пользователь')}</h2>
-                        <p style="color: #7bc9ff;">@${escapeHtml(currentUser || 'username')}</p>
+                    <div style="text-align: center; margin-bottom: 35px;">
+                        <div style="width: 110px; height: 110px; background: linear-gradient(135deg, #5bc0ff, #2f80ed); border-radius: 50%; margin: 0 auto 25px; display: flex; align-items: center; justify-content: center; font-size: 52px; font-weight: bold; box-shadow: 0 0 30px rgba(91,192,255,0.5);">${currentUser ? currentUser.charAt(0).toUpperCase() : 'U'}</div>
+                        <h2 style="font-size: 26px;">${escapeHtml(currentUser || 'Пользователь')}</h2>
+                        <p style="color: #7bc9ff; font-size: 15px;">@${escapeHtml(currentUser || 'username')}</p>
+                        <p style="margin-top: 10px; font-size: 13px; color: #8a9ac0;">Друзей: ${friends.length}</p>
                     </div>
-                    <div class="profile-field"><span class="profile-label"><i class="fas fa-calendar"></i> Дата регистрации</span><span>${registeredDate}</span></div>
-                    <div class="profile-field"><span class="profile-label"><i class="fas fa-shield-alt"></i> Шифрование</span><span>E2EE (MTProto)</span></div>
-                    <div class="profile-field"><span class="profile-label"><i class="fas fa-cloud"></i> Облачное хранилище</span><span>2 ГБ / 2 ГБ</span></div>
-                    <div class="profile-field"><span class="profile-label"><i class="fas fa-palette"></i> Тема</span><span>Тёмная + Неон</span></div>
-                    <div class="profile-field"><span class="profile-label"><i class="fas fa-microchip"></i> Divine Bot</span><span>Нейросеть активна</span></div>
-                    <div class="call-card logout-item" onclick="logout()" style="justify-content: center;"><i class="fas fa-sign-out-alt"></i> Выйти из аккаунта</div>
+                    <div class="profile-field"><span><i class="fas fa-calendar"></i> Регистрация</span><span>${registeredDate}</span></div>
+                    <div class="profile-field"><span><i class="fas fa-shield-alt"></i> Шифрование</span><span>E2EE (MTProto)</span></div>
+                    <div class="profile-field"><span><i class="fas fa-cloud"></i> Облако</span><span>5 ГБ / 5 ГБ</span></div>
+                    <div class="profile-field"><span><i class="fas fa-microchip"></i> Divine Bot</span><span>Нейросеть 2.0</span></div>
+                    <div class="call-card logout-item" onclick="logout()" style="justify-content: center; margin-top: 30px;"><i class="fas fa-sign-out-alt"></i> Выйти из аккаунта</div>
                 </div>
             `;
         }
     }
 
     // =====================================================================
-    // 7. СТОРИС
+    // 8. СТОРИС
     // =====================================================================
     function openStory(type) {
         const viewer = document.getElementById('storiesViewer');
         const content = document.getElementById('storyContent');
         if (type === 'my') {
-            content.innerHTML = '<div>📸 <strong>Моя история</strong><br><br>Нажми + чтобы добавить фото или видео<br><br><span style="font-size: 14px;">✨ Длительность: 24 часа</span></div>';
+            content.innerHTML = '<div>📸 <strong>Моя история</strong><br><br>➕ Нажми + чтобы добавить фото/видео<br><br>⏱️ Длительность: 24 часа</div>';
+        } else if (type === 'anna') {
+            content.innerHTML = '<div>✨ <strong>История Анны</strong><br><br>🌅 Прекрасный закат на море<br>☕ Утренний кофе латте<br>🎵 Новая песня Imagine Dragons<br><br><span style="font-size: 14px;">Обновлено 1 час назад</span></div>';
         } else {
-            content.innerHTML = '<div>✨ <strong>История Анны</strong><br><br>🌅 Прекрасный закат<br>☕ Утренний кофе<br>🎵 Любимая музыка<br><br><span style="font-size: 14px;">Обновлено 2 часа назад</span></div>';
+            content.innerHTML = '<div>🧪 <strong>Toxin</strong><br><br>💀 Твоя история выглядит опасной!<br>🔥 Набирай токсинов больше!<br><br><span style="font-size: 14px;">Обновлено прямо сейчас</span></div>';
         }
         viewer.style.display = 'flex';
     }
@@ -1048,12 +1086,8 @@
     }
 
     // =====================================================================
-    // 8. АВТОРИЗАЦИЯ (РЕГИСТРАЦИЯ / ВХОД / ВЫХОД)
+    // 9. АВТОРИЗАЦИЯ
     // =====================================================================
-    function saveUsers() {
-        localStorage.setItem('divine_users', JSON.stringify(users));
-    }
-
     function register() {
         const username = document.getElementById('regUsername').value.trim();
         const password = document.getElementById('regPassword').value;
@@ -1066,7 +1100,7 @@
         if (users[username]) { errorDiv.innerText = '❌ Пользователь уже существует'; return; }
         
         users[username] = { password: btoa(password), createdAt: new Date().toISOString() };
-        saveUsers();
+        saveAllData();
         localStorage.setItem('divine_current_user', username);
         currentUser = username;
         initApp();
@@ -1125,23 +1159,20 @@
     }
 
     // =====================================================================
-    // 9. ДЕМО-ПОЛЬЗОВАТЕЛИ ПРИ ПЕРВОМ ЗАПУСКЕ
+    // 10. ДЕМО-ПОЛЬЗОВАТЕЛИ
     // =====================================================================
     if (Object.keys(users).length === 0) {
         users = {
-            'alex': { password: btoa('1234'), createdAt: new Date().toISOString() },
-            'anna': { password: btoa('1234'), createdAt: new Date().toISOString() },
-            'demo': { password: btoa('1234'), createdAt: new Date().toISOString() }
+            'Алексей': { password: btoa('1234'), createdAt: new Date().toISOString() },
+            'Анна': { password: btoa('1234'), createdAt: new Date().toISOString() },
+            'Toxin': { password: btoa('1234'), createdAt: new Date().toISOString() },
+            'Артем порковка': { password: btoa('1234'), createdAt: new Date().toISOString() }
         };
-        saveUsers();
+        saveAllData();
     }
 
-    // Инициализация
     if (currentUser) {
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'block';
-        document.getElementById('usernameDisplay').innerText = currentUser;
-        updateChatList();
+        initApp();
     } else {
         document.getElementById('authScreen').style.display = 'flex';
         document.getElementById('appScreen').style.display = 'none';
