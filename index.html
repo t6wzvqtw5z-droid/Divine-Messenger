@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Divine — мессенджер с нейросетью</title>
+    <title>Divine — нейросеть мессенджер</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ===================================================================== */
+        /* 1. RESET & GLOBAL STYLES - СБРОС И ГЛОБАЛЬНЫЕ СТИЛИ                 */
+        /* ===================================================================== */
         * {
             margin: 0;
             padding: 0;
@@ -13,25 +16,139 @@
         }
 
         body {
-            background: #0a0e17;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0e17 0%, #0f1420 50%, #0a0e17 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'SF Pro Display', sans-serif;
             color: #eef2ff;
             line-height: 1.5;
+            min-height: 100vh;
         }
 
+        /* Mobile container - центрируем на больших экранах */
         .mobile-container {
             max-width: 500px;
             margin: 0 auto;
-            background: #0f1420;
+            background: rgba(15, 20, 32, 0.95);
+            backdrop-filter: blur(2px);
             min-height: 100vh;
             position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(91, 192, 255, 0.1);
+            border-radius: 0;
         }
 
-        .header {
-            padding: 16px 20px;
+        /* ===================================================================== */
+        /* 2. AUTH SCREEN - ЭКРАН АВТОРИЗАЦИИ (ВХОД И РЕГИСТРАЦИЯ)             */
+        /* ===================================================================== */
+        .auth-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 24px;
+            background: radial-gradient(ellipse at 30% 40%, #1a2332, #0a0e17);
+        }
+
+        .auth-card {
+            background: rgba(26, 35, 50, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 56px;
+            padding: 48px 36px;
+            width: 100%;
+            border: 1px solid rgba(255, 217, 102, 0.6);
+            box-shadow: 0 0 40px rgba(255, 200, 80, 0.35), 0 0 15px rgba(255, 220, 100, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .auth-card:hover {
+            box-shadow: 0 0 60px rgba(255, 200, 80, 0.5), 0 0 25px rgba(255, 220, 100, 0.4);
+            border-color: rgba(255, 217, 102, 0.9);
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 36px;
+            font-size: 34px;
+            background: linear-gradient(135deg, #ffffff, #7bc9ff, #5bc0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 16px 22px;
+            border-radius: 60px;
+            border: 1.5px solid rgba(255, 218, 136, 0.5);
             background: #0a0e17;
-            border-bottom: 1px solid #1f2a3e;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 18px;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .auth-card input:focus {
+            border-color: #ffcd6b;
+            box-shadow: 0 0 18px rgba(255, 200, 80, 0.6), 0 0 8px rgba(255, 220, 100, 0.4);
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 60px;
+            background: linear-gradient(135deg, #f0b042, #ffdd88);
+            border: none;
+            font-weight: 700;
+            font-size: 17px;
+            color: #1a1f2e;
+            cursor: pointer;
+            margin-top: 14px;
+            transition: all 0.25s ease;
+            box-shadow: 0 5px 20px rgba(255, 200, 80, 0.4);
+        }
+
+        .auth-card button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 28px rgba(255, 200, 80, 0.6);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 28px;
+            color: #9aabca;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .auth-switch span {
+            color: #5bc0ff;
+            text-shadow: 0 0 6px rgba(91, 192, 255, 0.5);
+            font-weight: 600;
+        }
+
+        .error-msg {
+            color: #ff8888;
+            font-size: 13px;
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        /* ===================================================================== */
+        /* 3. MAIN APP SCREEN - ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА                       */
+        /* ===================================================================== */
+        .app-screen {
+            display: none;
+            background: linear-gradient(180deg, #0f1420 0%, #0a0e17 100%);
+            min-height: 100vh;
+        }
+
+        /* Header with search */
+        .header {
+            padding: 20px 20px 14px;
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(91, 192, 255, 0.2);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -41,45 +158,56 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 18px;
         }
 
         .logo {
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #7bc9ff);
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #7bc9ff, #5bc0ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            letter-spacing: -0.5px;
         }
 
         .logo i {
             color: #5bc0ff;
-            margin-right: 6px;
+            margin-right: 8px;
+            text-shadow: 0 0 12px rgba(91, 192, 255, 0.6);
         }
 
         .user-badge {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #1a2332;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 13px;
+            background: rgba(26, 35, 50, 0.9);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(91, 192, 255, 0.3);
         }
 
         .search-bar {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: #1a2332;
-            border-radius: 30px;
-            padding: 10px 16px;
+            gap: 14px;
+            background: rgba(26, 35, 50, 0.9);
+            border-radius: 40px;
+            padding: 12px 18px;
+            border: 1px solid rgba(255, 218, 136, 0.3);
+            transition: all 0.2s;
+        }
+
+        .search-bar:focus-within {
+            border-color: #ffcd6b;
+            box-shadow: 0 0 12px rgba(255, 200, 80, 0.4);
         }
 
         .search-bar i {
-            color: #6e7c9e;
-            font-size: 16px;
+            color: #ffcd6b;
+            font-size: 18px;
         }
 
         .search-bar input {
@@ -87,88 +215,109 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 15px;
+            font-size: 16px;
             outline: none;
         }
 
         .search-bar input::placeholder {
-            color: #6e7c9e;
+            color: #7e8aa8;
         }
 
+        /* ===================================================================== */
+        /* 4. STORIES ROW - КРУЖОЧКИ СТОРИС                                    */
+        /* ===================================================================== */
         .stories-row {
-            padding: 16px 20px;
+            padding: 20px 20px;
             display: flex;
-            gap: 16px;
+            gap: 20px;
             overflow-x: auto;
-            border-bottom: 1px solid #1f2a3e;
+            border-bottom: 1px solid rgba(31, 42, 62, 0.8);
+            background: rgba(15, 20, 32, 0.6);
+        }
+
+        .stories-row::-webkit-scrollbar {
+            display: none;
         }
 
         .story-item {
             text-align: center;
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .story-item:hover {
+            transform: translateY(-3px);
         }
 
         .story-circle {
-            width: 70px;
-            height: 70px;
+            width: 78px;
+            height: 78px;
             border-radius: 50%;
             background: linear-gradient(135deg, #f5b042, #ff6680);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 6px;
-            border: 2px solid #ffdd88;
+            margin-bottom: 8px;
+            border: 2.5px solid #ffdd88;
+            box-shadow: 0 0 12px rgba(255, 102, 128, 0.4);
         }
 
         .story-circle.add-story {
             background: #1a2332;
-            border: 2px dashed #5bc0ff;
+            border: 2.5px dashed #5bc0ff;
         }
 
         .story-circle i {
-            font-size: 28px;
+            font-size: 32px;
             color: white;
         }
 
         .story-name {
-            font-size: 11px;
-            color: #9aabca;
+            font-size: 12px;
+            color: #b4c2e0;
+            font-weight: 500;
         }
 
+        /* ===================================================================== */
+        /* 5. CHAT LIST - СПИСОК ЧАТОВ                                         */
+        /* ===================================================================== */
         .chat-list {
             flex: 1;
             overflow-y: auto;
-            display: block;
+            padding: 8px 0;
         }
 
         .chat-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px 20px;
-            border-bottom: 1px solid #1e2538;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(30, 37, 56, 0.8);
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
 
         .chat-item:hover {
-            background: #1a2332;
+            background: rgba(26, 35, 50, 0.6);
+            transform: translateX(4px);
         }
 
         .chat-avatar {
-            width: 52px;
-            height: 52px;
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
             background: linear-gradient(135deg, #5bc0ff, #2f80ed);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 26px;
             font-weight: bold;
+            box-shadow: 0 0 10px rgba(91, 192, 255, 0.3);
         }
 
         .chat-avatar.bot {
             background: linear-gradient(135deg, #f0b042, #ff6680);
+            box-shadow: 0 0 12px rgba(240, 176, 66, 0.4);
         }
 
         .chat-info {
@@ -176,9 +325,9 @@
         }
 
         .chat-name {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 4px;
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 5px;
         }
 
         .chat-last-msg {
@@ -187,7 +336,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 200px;
+            max-width: 220px;
         }
 
         .chat-time {
@@ -195,12 +344,16 @@
             color: #6e7c9e;
         }
 
+        /* ===================================================================== */
+        /* 6. BOTTOM NAVIGATION - НИЖНЕЕ МЕНЮ                                   */
+        /* ===================================================================== */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
-            padding: 12px 20px 20px;
-            background: #0a0e17;
-            border-top: 1px solid #1f2a3e;
+            padding: 12px 20px 22px;
+            background: rgba(10, 14, 23, 0.96);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(91, 192, 255, 0.15);
             position: sticky;
             bottom: 0;
         }
@@ -209,21 +362,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            color: #6e7c9e;
+            gap: 5px;
+            color: #7e8aa8;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
             font-size: 12px;
+            padding: 6px 18px;
+            border-radius: 30px;
         }
 
         .nav-item i {
-            font-size: 22px;
+            font-size: 24px;
         }
 
         .nav-item.active {
             color: #5bc0ff;
+            text-shadow: 0 0 8px rgba(91, 192, 255, 0.5);
+            background: rgba(91, 192, 255, 0.1);
         }
 
+        /* ===================================================================== */
+        /* 7. CHAT SCREEN - ЭКРАН ЧАТА                                          */
+        /* ===================================================================== */
         .chat-screen {
             display: none;
             flex-direction: column;
@@ -233,7 +393,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #0f1420;
+            background: linear-gradient(180deg, #0f1420, #0a0e17);
             z-index: 200;
             max-width: 500px;
             margin: 0 auto;
@@ -243,17 +403,19 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            padding: 16px 20px;
-            background: #0a0e17;
-            border-bottom: 1px solid #1f2a3e;
+            padding: 18px 20px;
+            background: rgba(10, 14, 23, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(91, 192, 255, 0.2);
         }
 
         .back-btn {
             background: none;
             border: none;
             color: #5bc0ff;
-            font-size: 22px;
+            font-size: 26px;
             cursor: pointer;
+            padding: 8px;
         }
 
         .chat-header-info {
@@ -261,178 +423,136 @@
         }
 
         .chat-header-name {
-            font-weight: 600;
-            font-size: 18px;
+            font-weight: 700;
+            font-size: 19px;
         }
 
         .chat-header-status {
             font-size: 12px;
-            color: #6e7c9e;
+            color: #7bc9ff;
         }
 
         .messages-area {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .message {
             max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 18px;
-            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 22px;
+            font-size: 15px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.user {
-            background: #2f80ed;
+            background: linear-gradient(135deg, #2f80ed, #1e5bbf);
             align-self: flex-end;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 2px 8px rgba(47, 128, 237, 0.3);
         }
 
         .message.bot, .message.other {
-            background: #1a2332;
+            background: rgba(26, 35, 50, 0.95);
             align-self: flex-start;
-            border-bottom-left-radius: 4px;
+            border-bottom-left-radius: 6px;
+            border: 1px solid rgba(91, 192, 255, 0.2);
         }
 
         .message-time {
             font-size: 10px;
             color: #8a9ac0;
-            margin-top: 4px;
+            margin-top: 5px;
             text-align: right;
         }
 
         .chat-input-area {
             display: flex;
-            gap: 12px;
-            padding: 12px 20px 20px;
-            background: #0a0e17;
-            border-top: 1px solid #1f2a3e;
+            gap: 14px;
+            padding: 14px 20px 24px;
+            background: rgba(10, 14, 23, 0.96);
+            border-top: 1px solid rgba(31, 42, 62, 0.8);
         }
 
         .chat-input-area input {
             flex: 1;
             background: #1a2332;
-            border: none;
+            border: 1px solid rgba(255, 218, 136, 0.3);
             border-radius: 30px;
-            padding: 12px 18px;
+            padding: 14px 20px;
             color: white;
-            font-size: 15px;
+            font-size: 16px;
             outline: none;
+            transition: all 0.2s;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #ffcd6b;
+            box-shadow: 0 0 12px rgba(255, 200, 80, 0.3);
         }
 
         .chat-input-area button {
-            background: #2f80ed;
+            background: linear-gradient(135deg, #2f80ed, #1e5bbf);
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             color: white;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 10px rgba(47, 128, 237, 0.4);
         }
 
+        .chat-input-area button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(47, 128, 237, 0.6);
+        }
+
+        /* ===================================================================== */
+        /* 8. SEARCH RESULTS - РЕЗУЛЬТАТЫ ПОИСКА                                */
+        /* ===================================================================== */
         .search-results {
             display: none;
             position: absolute;
-            top: 110px;
+            top: 130px;
             left: 20px;
             right: 20px;
             background: #1a2332;
-            border-radius: 20px;
+            border-radius: 28px;
             padding: 12px;
             z-index: 150;
-            border: 1px solid #2a3450;
+            border: 1px solid #ffda88;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
         .search-result-item {
-            padding: 12px;
+            padding: 14px;
             border-bottom: 1px solid #2a3450;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+            transition: 0.2s;
         }
 
-        .search-result-item:last-child {
-            border-bottom: none;
+        .search-result-item:hover {
+            background: #2a3450;
+            border-radius: 20px;
         }
 
-        .auth-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 40px 24px;
-            background: #0f1420;
-        }
-
-        .auth-card {
-            background: #1a2332;
-            border-radius: 48px;
-            padding: 40px 28px;
-            width: 100%;
-            border: 1px solid #ffd966;
-            box-shadow: 0 0 20px rgba(255,200,80,0.2);
-        }
-
-        .auth-card h2 {
-            text-align: center;
-            margin-bottom: 28px;
-            font-size: 28px;
-        }
-
-        .auth-card input {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 60px;
-            border: 1px solid #ffda88;
-            background: #0a0e17;
-            color: white;
-            font-size: 16px;
-            margin-bottom: 16px;
-            outline: none;
-        }
-
-        .auth-card button {
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            background: linear-gradient(135deg, #f0b042, #ffdd88);
-            border: none;
-            font-weight: 700;
-            font-size: 16px;
-            color: #1a1f2e;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        .auth-switch {
-            text-align: center;
-            margin-top: 20px;
-            color: #8a9ac0;
-            cursor: pointer;
-        }
-
-        .auth-switch span {
-            color: #5bc0ff;
-        }
-
-        .error-msg {
-            color: #ff8888;
-            font-size: 12px;
-            margin-top: 8px;
-            text-align: center;
-        }
-
-        .app-screen {
-            display: none;
-        }
-
+        /* ===================================================================== */
+        /* 9. STORIES VIEWER - ПРОСМОТР СТОРИС                                  */
+        /* ===================================================================== */
         .stories-viewer {
             display: none;
             position: fixed;
@@ -447,44 +567,79 @@
         }
 
         .story-content {
-            font-size: 32px;
+            font-size: 36px;
             text-align: center;
-            padding: 40px;
+            padding: 50px;
+            background: linear-gradient(135deg, #1a2332, #0a0e17);
+            border-radius: 40px;
         }
 
         .close-stories {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             background: none;
             border: none;
             color: white;
-            font-size: 28px;
+            font-size: 32px;
             cursor: pointer;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        .calls-container {
+        /* ===================================================================== */
+        /* 10. CALLS & PROFILE CONTAINERS                                       */
+        /* ===================================================================== */
+        .calls-container, .profile-container {
             padding: 20px;
         }
+
         .call-card {
-            background: #1a2332;
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 12px;
+            background: rgba(26, 35, 50, 0.9);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
             cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(91, 192, 255, 0.2);
+        }
+
+        .call-card:hover {
+            background: #2a3450;
+            transform: translateX(6px);
+            border-color: #5bc0ff;
+        }
+
+        .profile-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px 0;
+            border-bottom: 1px solid #1e2538;
+        }
+
+        .logout-item {
+            background: rgba(255, 80, 80, 0.15);
+            border-radius: 28px;
+            margin-top: 30px;
+            color: #ffaaaa;
+            text-align: center;
+        }
+
+        /* ===================================================================== */
+        /* 11. UTILITIES - ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ                               */
+        /* ===================================================================== */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 <div class="mobile-container" id="mobileContainer">
-    <!-- Auth Screen -->
+
+    <!-- ================================================================= -->
+    <!-- AUTH SCREEN - ЭКРАН ВХОДА/РЕГИСТРАЦИИ                              -->
+    <!-- ================================================================= -->
     <div id="authScreen" class="auth-screen">
         <div class="auth-card">
             <h2><i class="fas fa-feather-alt"></i> Divine</h2>
@@ -506,12 +661,14 @@
         </div>
     </div>
 
-    <!-- Main App Screen -->
+    <!-- ================================================================= -->
+    <!-- MAIN APP SCREEN - ГЛАВНЫЙ ЭКРАН ПОСЛЕ ВХОДА                        -->
+    <!-- ================================================================= -->
     <div id="appScreen" class="app-screen">
         <div class="header">
             <div class="header-top">
                 <div class="logo"><i class="fas fa-feather-alt"></i> Divine</div>
-                <div class="user-badge" id="userBadge"></div>
+                <div class="user-badge" id="userBadge"><i class="fas fa-user-circle"></i> <span id="usernameDisplay"></span></div>
             </div>
             <div class="search-bar">
                 <i class="fas fa-search"></i>
@@ -519,21 +676,21 @@
             </div>
         </div>
 
-        <!-- Stories -->
+        <!-- Stories Row -->
         <div id="storiesContainer">
             <div class="stories-row" id="storiesRow">
                 <div class="story-item" onclick="openStory('my')">
                     <div class="story-circle add-story"><i class="fas fa-plus"></i></div>
                     <div class="story-name">Моя история</div>
                 </div>
-                <div class="story-item" onclick="openStory('friend')">
+                <div class="story-item" onclick="openStory('anna')">
                     <div class="story-circle"><i class="fas fa-user"></i></div>
                     <div class="story-name">Анна</div>
                 </div>
             </div>
         </div>
 
-        <!-- Chat List -->
+        <!-- Chat List Container -->
         <div id="chatListContainer">
             <div class="chat-list" id="chatList"></div>
         </div>
@@ -559,13 +716,15 @@
         </div>
     </div>
 
-    <!-- Chat Screen -->
+    <!-- ================================================================= -->
+    <!-- CHAT SCREEN - ЭКРАН ОТКРЫТОГО ЧАТА                                 -->
+    <!-- ================================================================= -->
     <div id="chatScreen" class="chat-screen">
         <div class="chat-header">
             <button class="back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
             <div class="chat-header-info">
                 <div class="chat-header-name" id="chatHeaderName">Divine Bot</div>
-                <div class="chat-header-status" id="chatHeaderStatus">онлайн, нейросеть</div>
+                <div class="chat-header-status" id="chatHeaderStatus">онлайн · нейросеть</div>
             </div>
         </div>
         <div class="messages-area" id="messagesArea"></div>
@@ -575,10 +734,14 @@
         </div>
     </div>
 
-    <!-- Search Results -->
+    <!-- ================================================================= -->
+    <!-- SEARCH RESULTS - РЕЗУЛЬТАТЫ ПОИСКА ПОЛЬЗОВАТЕЛЕЙ                   -->
+    <!-- ================================================================= -->
     <div id="searchResults" class="search-results"></div>
 
-    <!-- Stories Viewer -->
+    <!-- ================================================================= -->
+    <!-- STORIES VIEWER - ПРОСМОТР ИСТОРИЙ                                  -->
+    <!-- ================================================================= -->
     <div id="storiesViewer" class="stories-viewer">
         <button class="close-stories" onclick="closeStories()"><i class="fas fa-times"></i></button>
         <div class="story-content" id="storyContent"></div>
@@ -586,142 +749,140 @@
 </div>
 
 <script>
-    // ========== DATA ==========
+    // =====================================================================
+    // 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И ХРАНИЛИЩА
+    // =====================================================================
     let users = JSON.parse(localStorage.getItem('divine_users') || '{}');
     let currentUser = localStorage.getItem('divine_current_user');
     let chatMessages = JSON.parse(localStorage.getItem('divine_chat_messages') || '{"divine_bot": []}');
     let privateChats = JSON.parse(localStorage.getItem('divine_private_chats') || '{}');
-    let stories = JSON.parse(localStorage.getItem('divine_stories') || '[]');
+    let currentChatObj = null;
 
-    // Bot responses
-    const botResponses = {
-        default: "Я нейросеть Divine Bot! 😊 Задай любой вопрос, я помогу.",
-        hello: "Привет! Рад тебя видеть в Divine! Чем могу помочь?",
-        how: "Я работаю отлично! А как твои дела?",
-        name: "Я Divine Bot — твой виртуальный помощник!",
-        help: "Вот что я умею:\n• Отвечать на вопросы\n• Рассказывать новости\n• Помогать с настройками Divine\nПросто напиши что нужно!",
-        news: "Divine обновляется! Скоро появятся голосовые сообщения и видеозвонки в группах до 50 человек! 🚀",
-        thanks: "Пожалуйста! Всегда рад помочь 😊",
-        love: "Спасибо! Ты тоже крутой пользователь Divine! 💙"
+    // =====================================================================
+    // 2. НЕЙРОСЕТЬ DIVINE BOT - ОТВЕТЫ НА ВОПРОСЫ
+    // =====================================================================
+    const botKnowledge = {
+        greetings: ['привет', 'здравствуй', 'здарова', 'hi', 'hello', 'доброе утро', 'добрый день', 'добрый вечер'],
+        howAreYou: ['как дела', 'как ты', 'как жизнь', 'как настроение', 'что нового'],
+        whoAreYou: ['кто ты', 'ты кто', 'расскажи о себе', 'что ты умеешь'],
+        help: ['помощь', 'команды', 'что умеешь', 'help', 'подскажи'],
+        news: ['новости', 'обновления', 'что нового в divine', 'последние обновления'],
+        thanks: ['спасибо', 'благодарю', 'thx', 'thanks', 'спс'],
+        love: ['люблю', 'ты лучший', 'классный', 'супер', 'круто'],
+        weather: ['погода', 'какая погода', 'на улице'],
+        time: ['время', 'который час', 'сколько времени'],
+        name: ['меня зовут', 'моё имя', 'ты знаешь моё имя'],
+        about: ['расскажи', 'интересно', 'поделись']
     };
 
-    function getBotReply(text) {
-        const msg = text.toLowerCase();
-        if (msg.match(/привет|здравствуй|здарова|hi|hello/i)) return botResponses.hello;
-        if (msg.match(/как дела|как ты|как жизнь/i)) return botResponses.how;
-        if (msg.match(/кто ты|ты кто|имя/i)) return botResponses.name;
-        if (msg.match(/помощь|команды|что умеешь|help/i)) return botResponses.help;
-        if (msg.match(/новости|обновления|что нового/i)) return botResponses.news;
-        if (msg.match(/спасибо|благодарю|thx|thanks/i)) return botResponses.thanks;
-        if (msg.match(/люблю|ты лучший|классный/i)) return botResponses.love;
-        return `📡 Получил твой запрос: "${text}".\n\nЯ нейросеть Divine Bot. Спрашивай что угодно! ${botResponses.default}`;
+    const botAnswers = {
+        greeting: "Привет! 😊 Я Divine Bot — твой виртуальный помощник. Рад общению! Чем могу помочь?",
+        howAreYou: "Я нейросеть, работаю отлично! 💪 Постоянно учусь и становлюсь лучше. А как твои дела?",
+        whoAreYou: "Я Divine Bot — искусственный интеллект, созданный для помощи в мессенджере Divine. Умею отвечать на вопросы, давать советы и просто общаться! 🤖",
+        help: "Вот что я умею:\n📝 Отвечать на вопросы\n🎮 Рассказывать о функциях Divine\n📰 Делиться новостями\n💬 Поддерживать разговор\nПросто напиши, что тебя интересует!",
+        news: "🔥 Новости Divine:\n• Видеозвонки до 50 человек\n• Стикеры с анимацией\n• Облачное хранилище 2 ГБ\n• Сквозное шифрование E2EE\nОбновление выйдет на следующей неделе!",
+        thanks: "Пожалуйста! 😊 Всегда рад помочь. Обращайся, если что-то нужно!",
+        love: "Спасибо за тёплые слова! 💙 Ты делаешь Divine лучше!",
+        weather: "За погодой лучше обратиться к погодному боту. Но я могу сказать, что сегодня отличный день для общения в Divine! ☀️",
+        time: "Время можно посмотреть в верхней части экрана. Я всегда здесь, чтобы помочь! ⏰",
+        name: "Конечно, я запомню! 😊 Приятно познакомиться! Расскажи, чем занимаешься?",
+        about: "Divine — это мессенджер будущего. E2EE шифрование, нейросеть-помощник, облако 2 ГБ. Всё для комфортного общения! 🚀",
+        default: "Интересный вопрос! 📡 Я ещё учусь, но обязательно найду ответ. Попробуй спросить что-то другое или напиши 'помощь' для списка команд."
+    };
+
+    function getBotReply(userMessage) {
+        const msg = userMessage.toLowerCase();
+        
+        if (botKnowledge.greetings.some(word => msg.includes(word))) return botAnswers.greeting;
+        if (botKnowledge.howAreYou.some(word => msg.includes(word))) return botAnswers.howAreYou;
+        if (botKnowledge.whoAreYou.some(word => msg.includes(word))) return botAnswers.whoAreYou;
+        if (botKnowledge.help.some(word => msg.includes(word))) return botAnswers.help;
+        if (botKnowledge.news.some(word => msg.includes(word))) return botAnswers.news;
+        if (botKnowledge.thanks.some(word => msg.includes(word))) return botAnswers.thanks;
+        if (botKnowledge.love.some(word => msg.includes(word))) return botAnswers.love;
+        if (botKnowledge.weather.some(word => msg.includes(word))) return botAnswers.weather;
+        if (botKnowledge.time.some(word => msg.includes(word))) return botAnswers.time;
+        if (botKnowledge.name.some(word => msg.includes(word))) return `${botAnswers.name}\n\nКстати, твой никнейм в Divine: ${currentUser || 'пользователь'}`;
+        if (botKnowledge.about.some(word => msg.includes(word))) return botAnswers.about;
+        
+        return `${botAnswers.default}\n\nТвой запрос: "${userMessage.substring(0, 50)}"`;
     }
 
-    function saveMessages() {
+    // =====================================================================
+    // 3. РАБОТА С СООБЩЕНИЯМИ И ЧАТАМИ
+    // =====================================================================
+    function saveAllData() {
+        localStorage.setItem('divine_users', JSON.stringify(users));
         localStorage.setItem('divine_chat_messages', JSON.stringify(chatMessages));
         localStorage.setItem('divine_private_chats', JSON.stringify(privateChats));
     }
 
-    function renderMessages(chatId, chatType) {
+    function renderMessages(chatId, isBot) {
         const container = document.getElementById('messagesArea');
         if (!container) return;
         
-        let messages = [];
-        if (chatType === 'bot') {
-            messages = chatMessages[chatId] || [];
-        } else {
-            messages = privateChats[chatId] || [];
-        }
-        
+        let messages = isBot ? (chatMessages[chatId] || []) : (privateChats[chatId] || []);
         container.innerHTML = '';
+        
         messages.forEach(msg => {
             const div = document.createElement('div');
-            let senderClass = '';
-            if (msg.sender === currentUser) {
-                senderClass = 'user';
-            } else if (msg.sender === 'bot') {
-                senderClass = 'bot';
-            } else {
-                senderClass = 'other';
-            }
-            div.className = `message ${senderClass}`;
-            div.innerHTML = `
-                <div>${escapeHtml(msg.text)}</div>
-                <div class="message-time">${msg.time}</div>
-            `;
+            const isUserMsg = msg.sender === currentUser;
+            div.className = `message ${isUserMsg ? 'user' : (isBot && msg.sender === 'bot' ? 'bot' : 'other')}`;
+            div.innerHTML = `<div>${escapeHtml(msg.text)}</div><div class="message-time">${msg.time || msg.timestamp || 'сейчас'}</div>`;
             container.appendChild(div);
         });
         container.scrollTop = container.scrollHeight;
-        updateLastMessage(chatId, chatType);
-    }
-
-    function updateLastMessage(chatId, chatType) {
-        if (chatType === 'bot') {
-            const messages = chatMessages[chatId] || [];
-            if (messages.length > 0 && chatId === 'divine_bot') {
-                const lastMsg = messages[messages.length - 1];
-                const botLastMsgSpan = document.getElementById('botLastMsg');
-                if (botLastMsgSpan) {
-                    botLastMsgSpan.innerText = lastMsg.text.substring(0, 40) + (lastMsg.text.length > 40 ? '...' : '');
-                }
-            }
-        } else {
-            // Update private chat in sidebar
-            const messages = privateChats[chatId] || [];
-            if (messages.length > 0) {
-                const lastMsg = messages[messages.length - 1];
-                const sidebarItem = document.querySelector(`.chat-item[data-chat-id="${chatId}"] .chat-last-msg`);
-                if (sidebarItem) {
-                    sidebarItem.innerText = lastMsg.text.substring(0, 40) + (lastMsg.text.length > 40 ? '...' : '');
-                }
-            }
-        }
     }
 
     function sendMessage() {
         const input = document.getElementById('chatInput');
         const text = input.value.trim();
-        if (!text) return;
-
-        const currentChatObj = window.currentChat;
-        if (!currentChatObj) return;
-
-        const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-
-        if (currentChatObj.type === 'bot') {
+        if (!text || !currentChatObj) return;
+        
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+        
+        // User message
+        const userMsg = { sender: currentUser, text: text, time: timeStr, timestamp: now.toISOString() };
+        
+        if (currentChatObj.isBot) {
             if (!chatMessages[currentChatObj.id]) chatMessages[currentChatObj.id] = [];
-            chatMessages[currentChatObj.id].push({sender: currentUser, text: text, time: time});
-            saveMessages();
-            renderMessages(currentChatObj.id, 'bot');
+            chatMessages[currentChatObj.id].push(userMsg);
+            saveAllData();
+            renderMessages(currentChatObj.id, true);
             input.value = '';
-
+            
+            // Bot reply with typing simulation
             setTimeout(() => {
                 const botReply = getBotReply(text);
-                const botTime = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-                chatMessages[currentChatObj.id].push({sender: 'bot', text: botReply, time: botTime});
-                saveMessages();
-                renderMessages(currentChatObj.id, 'bot');
-            }, 500);
+                const botTime = `${new Date().getHours().toString().padStart(2,'0')}:${new Date().getMinutes().toString().padStart(2,'0')}`;
+                const botMsg = { sender: 'bot', text: botReply, time: botTime, timestamp: new Date().toISOString() };
+                chatMessages[currentChatObj.id].push(botMsg);
+                saveAllData();
+                renderMessages(currentChatObj.id, true);
+                updateChatList();
+            }, 600);
         } else {
             if (!privateChats[currentChatObj.id]) privateChats[currentChatObj.id] = [];
-            privateChats[currentChatObj.id].push({sender: currentUser, text: text, time: time});
-            saveMessages();
-            renderMessages(currentChatObj.id, 'private');
+            privateChats[currentChatObj.id].push(userMsg);
+            saveAllData();
+            renderMessages(currentChatObj.id, false);
             input.value = '';
+            updateChatList();
         }
     }
 
-    function openChat(chatId, name, type, isBot = false) {
-        window.currentChat = {id: chatId, name: name, type: type, isBot: isBot};
+    function openChat(chatId, name, isBot = true) {
+        currentChatObj = { id: chatId, name: name, isBot: isBot };
         document.getElementById('chatHeaderName').innerText = name;
-        document.getElementById('chatHeaderStatus').innerText = isBot ? 'онлайн, нейросеть' : 'пользователь Divine';
+        document.getElementById('chatHeaderStatus').innerHTML = isBot ? '<i class="fas fa-microchip"></i> нейросеть · онлайн' : '<i class="fas fa-circle" style="color:#31a24c; font-size:10px;"></i> пользователь Divine';
         
         if (isBot) {
             if (!chatMessages[chatId]) chatMessages[chatId] = [];
-            renderMessages(chatId, 'bot');
+            renderMessages(chatId, true);
         } else {
             if (!privateChats[chatId]) privateChats[chatId] = [];
-            renderMessages(chatId, 'private');
+            renderMessages(chatId, false);
         }
         
         document.getElementById('chatScreen').style.display = 'flex';
@@ -731,37 +892,38 @@
     function closeChat() {
         document.getElementById('chatScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
-        renderChatList();
+        updateChatList();
     }
 
-    function renderChatList() {
+    // =====================================================================
+    // 4. ОБНОВЛЕНИЕ СПИСКА ЧАТОВ
+    // =====================================================================
+    function updateChatList() {
         const container = document.getElementById('chatList');
         if (!container) return;
         
-        // Bot chat always first
         let html = `
-            <div class="chat-item" data-chat-id="divine_bot" onclick="openChat('divine_bot', 'Divine Bot', 'bot', true)">
+            <div class="chat-item" onclick="openChat('divine_bot', 'Divine Bot 🤖', true)">
                 <div class="chat-avatar bot">🤖</div>
                 <div class="chat-info">
-                    <div class="chat-name">Divine Bot 🤖</div>
-                    <div class="chat-last-msg" id="botLastMsg">${chatMessages['divine_bot'] && chatMessages['divine_bot'].length > 0 ? chatMessages['divine_bot'][chatMessages['divine_bot'].length-1].text.substring(0,40) : 'Напиши мне что-нибудь!'}</div>
+                    <div class="chat-name">Divine Bot</div>
+                    <div class="chat-last-msg" id="botLastMsg">${chatMessages.divine_bot && chatMessages.divine_bot.length > 0 ? chatMessages.divine_bot[chatMessages.divine_bot.length-1].text.substring(0, 45) : 'Напиши мне что-нибудь!'}</div>
                 </div>
-                <div class="chat-time">сейчас</div>
+                <div class="chat-time">${chatMessages.divine_bot && chatMessages.divine_bot.length > 0 ? chatMessages.divine_bot[chatMessages.divine_bot.length-1].time : 'сейчас'}</div>
             </div>
         `;
         
-        // Private chats with other users
-        for (const [otherUser, messages] of Object.entries(privateChats)) {
-            if (messages.length > 0) {
-                const lastMsg = messages[messages.length-1];
+        for (const [user, msgs] of Object.entries(privateChats)) {
+            if (msgs.length > 0) {
+                const lastMsg = msgs[msgs.length-1];
                 html += `
-                    <div class="chat-item" data-chat-id="${otherUser}" onclick="openChat('${otherUser}', '${otherUser}', 'private', false)">
-                        <div class="chat-avatar">${otherUser.charAt(0).toUpperCase()}</div>
+                    <div class="chat-item" onclick="openChat('${user}', '${user}', false)">
+                        <div class="chat-avatar">${user.charAt(0).toUpperCase()}</div>
                         <div class="chat-info">
-                            <div class="chat-name">${otherUser}</div>
-                            <div class="chat-last-msg">${lastMsg.text.substring(0,40)}</div>
+                            <div class="chat-name">${escapeHtml(user)}</div>
+                            <div class="chat-last-msg">${escapeHtml(lastMsg.text.substring(0, 45))}</div>
                         </div>
-                        <div class="chat-time">${lastMsg.time}</div>
+                        <div class="chat-time">${lastMsg.time || 'сейчас'}</div>
                     </div>
                 `;
             }
@@ -770,106 +932,33 @@
         container.innerHTML = html;
     }
 
-    function switchTab(tab) {
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        document.querySelector(`.nav-item[data-tab="${tab}"]`).classList.add('active');
-
-        const storiesContainer = document.getElementById('storiesContainer');
-        const chatListContainer = document.getElementById('chatListContainer');
-        
-        if (tab === 'chats') {
-            storiesContainer.style.display = 'block';
-            chatListContainer.style.display = 'block';
-            renderChatList();
-        } else if (tab === 'stories') {
-            storiesContainer.style.display = 'block';
-            chatListContainer.style.display = 'none';
-        } else if (tab === 'calls') {
-            storiesContainer.style.display = 'none';
-            chatListContainer.style.display = 'block';
-            const container = document.getElementById('chatList');
-            container.innerHTML = `
-                <div class="calls-container">
-                    <div class="call-card" onclick="makeCall('video')">
-                        <i class="fas fa-video" style="font-size: 28px; color:#5bc0ff;"></i>
-                        <div><strong>Видеозвонок</strong><br><span style="font-size:12px; color:#8a9ac0;">E2EE шифрование</span></div>
-                    </div>
-                    <div class="call-card" onclick="makeCall('audio')">
-                        <i class="fas fa-phone" style="font-size: 28px; color:#5bc0ff;"></i>
-                        <div><strong>Аудиозвонок</strong><br><span style="font-size:12px; color:#8a9ac0;">Сквозное шифрование</span></div>
-                    </div>
-                    <div class="call-card" onclick="makeCall('group')">
-                        <i class="fas fa-users" style="font-size: 28px; color:#5bc0ff;"></i>
-                        <div><strong>Групповой вызов</strong><br><span style="font-size:12px; color:#8a9ac0;">До 30 участников</span></div>
-                    </div>
-                </div>
-            `;
-        } else if (tab === 'profile') {
-            storiesContainer.style.display = 'none';
-            chatListContainer.style.display = 'block';
-            const container = document.getElementById('chatList');
-            container.innerHTML = `
-                <div class="chat-item">
-                    <div class="chat-avatar">${currentUser ? currentUser.charAt(0).toUpperCase() : 'U'}</div>
-                    <div class="chat-info">
-                        <div class="chat-name">${currentUser || 'Пользователь'}</div>
-                        <div class="chat-last-msg">@${currentUser || 'username'}</div>
-                    </div>
-                </div>
-                <div class="chat-item">
-                    <div class="chat-avatar"><i class="fas fa-shield-alt"></i></div>
-                    <div class="chat-info">
-                        <div class="chat-name">E2EE шифрование</div>
-                        <div class="chat-last-msg">Ваши данные защищены</div>
-                    </div>
-                </div>
-                <div class="chat-item">
-                    <div class="chat-avatar"><i class="fas fa-cloud"></i></div>
-                    <div class="chat-info">
-                        <div class="chat-name">Облако 2 ГБ</div>
-                        <div class="chat-last-msg">Свободно 2 ГБ</div>
-                    </div>
-                </div>
-                <div class="chat-item" onclick="logout()">
-                    <div class="chat-avatar"><i class="fas fa-sign-out-alt"></i></div>
-                    <div class="chat-info">
-                        <div class="chat-name">Выйти из аккаунта</div>
-                        <div class="chat-last-msg">Завершить сессию</div>
-                    </div>
-                </div>
-            `;
-        }
-    }
-
-    function makeCall(type) {
-        let msg = '';
-        if (type === 'video') msg = '📹 Видеозвонок с E2EE шифрованием\n(демо-режим)';
-        else if (type === 'audio') msg = '📞 Аудиозвонок с E2EE шифрованием\n(демо-режим)';
-        else msg = '👥 Групповой вызов до 30 участников\nСквозное шифрование включено';
-        alert(msg);
-    }
-
+    // =====================================================================
+    // 5. ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+    // =====================================================================
     function searchUsers() {
         const query = document.getElementById('searchInput').value.trim().toLowerCase();
         const resultsDiv = document.getElementById('searchResults');
+        
         if (!query) {
             resultsDiv.style.display = 'none';
             return;
         }
+        
         const foundUsers = Object.keys(users).filter(u => u.toLowerCase().includes(query) && u !== currentUser);
+        
         if (foundUsers.length > 0) {
             resultsDiv.innerHTML = foundUsers.map(u => `
                 <div class="search-result-item" onclick="startChatWith('${u}')">
-                    <i class="fas fa-user-circle" style="font-size: 32px; color:#5bc0ff;"></i>
+                    <i class="fas fa-user-circle" style="font-size: 38px; color:#5bc0ff;"></i>
                     <div>
-                        <div><strong>${escapeHtml(u)}</strong></div>
-                        <div style="font-size: 12px; color:#8a9ac0;">Нажмите для чата</div>
+                        <div style="font-weight: 600; font-size: 16px;">${escapeHtml(u)}</div>
+                        <div style="font-size: 12px; color:#8a9ac0;">Нажми, чтобы начать чат</div>
                     </div>
                 </div>
             `).join('');
             resultsDiv.style.display = 'block';
         } else {
-            resultsDiv.innerHTML = '<div class="search-result-item">👤 Пользователи не найдены</div>';
+            resultsDiv.innerHTML = '<div class="search-result-item" style="justify-content:center;">👤 Пользователи не найдены</div>';
             resultsDiv.style.display = 'block';
         }
     }
@@ -877,20 +966,79 @@
     function startChatWith(username) {
         document.getElementById('searchResults').style.display = 'none';
         document.getElementById('searchInput').value = '';
-        if (!privateChats[username]) {
-            privateChats[username] = [];
-            saveMessages();
-        }
-        openChat(username, username, 'private', false);
+        if (!privateChats[username]) privateChats[username] = [];
+        saveAllData();
+        openChat(username, username, false);
     }
 
+    // =====================================================================
+    // 6. ВКЛАДКИ (CHATS / STORIES / CALLS / PROFILE)
+    // =====================================================================
+    function switchTab(tab) {
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        document.querySelector(`.nav-item[data-tab="${tab}"]`).classList.add('active');
+        
+        const storiesContainer = document.getElementById('storiesContainer');
+        const chatListContainer = document.getElementById('chatListContainer');
+        
+        if (tab === 'chats') {
+            storiesContainer.style.display = 'block';
+            chatListContainer.style.display = 'block';
+            updateChatList();
+        } else if (tab === 'stories') {
+            storiesContainer.style.display = 'block';
+            chatListContainer.style.display = 'none';
+        } else if (tab === 'calls') {
+            storiesContainer.style.display = 'none';
+            chatListContainer.style.display = 'block';
+            document.getElementById('chatList').innerHTML = `
+                <div class="calls-container">
+                    <div class="call-card" onclick="alert('📹 Видеозвонок с E2EE шифрованием\\n(демо-режим)')">
+                        <i class="fas fa-video" style="font-size: 32px; color:#5bc0ff;"></i>
+                        <div><strong style="font-size: 17px;">Видеозвонок</strong><br><span style="font-size: 13px; color:#8a9ac0;">E2EE шифрование</span></div>
+                    </div>
+                    <div class="call-card" onclick="alert('📞 Аудиозвонок с E2EE шифрованием\\n(демо-режим)')">
+                        <i class="fas fa-phone" style="font-size: 32px; color:#5bc0ff;"></i>
+                        <div><strong style="font-size: 17px;">Аудиозвонок</strong><br><span style="font-size: 13px; color:#8a9ac0;">Сквозное шифрование</span></div>
+                    </div>
+                    <div class="call-card" onclick="alert('👥 Групповой вызов до 30 участников\\nСквозное шифрование включено')">
+                        <i class="fas fa-users" style="font-size: 32px; color:#5bc0ff;"></i>
+                        <div><strong style="font-size: 17px;">Групповой вызов</strong><br><span style="font-size: 13px; color:#8a9ac0;">До 30 участников</span></div>
+                    </div>
+                </div>
+            `;
+        } else if (tab === 'profile') {
+            storiesContainer.style.display = 'none';
+            chatListContainer.style.display = 'block';
+            const registeredDate = users[currentUser]?.createdAt ? new Date(users[currentUser].createdAt).toLocaleDateString() : 'сегодня';
+            document.getElementById('chatList').innerHTML = `
+                <div class="profile-container">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #5bc0ff, #2f80ed); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; box-shadow: 0 0 25px rgba(91,192,255,0.4);">${currentUser ? currentUser.charAt(0).toUpperCase() : 'U'}</div>
+                        <h2 style="font-size: 24px;">${escapeHtml(currentUser || 'Пользователь')}</h2>
+                        <p style="color: #7bc9ff;">@${escapeHtml(currentUser || 'username')}</p>
+                    </div>
+                    <div class="profile-field"><span class="profile-label"><i class="fas fa-calendar"></i> Дата регистрации</span><span>${registeredDate}</span></div>
+                    <div class="profile-field"><span class="profile-label"><i class="fas fa-shield-alt"></i> Шифрование</span><span>E2EE (MTProto)</span></div>
+                    <div class="profile-field"><span class="profile-label"><i class="fas fa-cloud"></i> Облачное хранилище</span><span>2 ГБ / 2 ГБ</span></div>
+                    <div class="profile-field"><span class="profile-label"><i class="fas fa-palette"></i> Тема</span><span>Тёмная + Неон</span></div>
+                    <div class="profile-field"><span class="profile-label"><i class="fas fa-microchip"></i> Divine Bot</span><span>Нейросеть активна</span></div>
+                    <div class="call-card logout-item" onclick="logout()" style="justify-content: center;"><i class="fas fa-sign-out-alt"></i> Выйти из аккаунта</div>
+                </div>
+            `;
+        }
+    }
+
+    // =====================================================================
+    // 7. СТОРИС
+    // =====================================================================
     function openStory(type) {
         const viewer = document.getElementById('storiesViewer');
         const content = document.getElementById('storyContent');
         if (type === 'my') {
-            content.innerHTML = '<div>📸 Твоя история<br><br>Нажми + чтобы добавить фото или видео</div>';
+            content.innerHTML = '<div>📸 <strong>Моя история</strong><br><br>Нажми + чтобы добавить фото или видео<br><br><span style="font-size: 14px;">✨ Длительность: 24 часа</span></div>';
         } else {
-            content.innerHTML = '<div>✨ История Анны<br><br>Последнее обновление: сегодня</div>';
+            content.innerHTML = '<div>✨ <strong>История Анны</strong><br><br>🌅 Прекрасный закат<br>☕ Утренний кофе<br>🎵 Любимая музыка<br><br><span style="font-size: 14px;">Обновлено 2 часа назад</span></div>';
         }
         viewer.style.display = 'flex';
     }
@@ -899,13 +1047,9 @@
         document.getElementById('storiesViewer').style.display = 'none';
     }
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // ========== AUTH ==========
+    // =====================================================================
+    // 8. АВТОРИЗАЦИЯ (РЕГИСТРАЦИЯ / ВХОД / ВЫХОД)
+    // =====================================================================
     function saveUsers() {
         localStorage.setItem('divine_users', JSON.stringify(users));
     }
@@ -915,25 +1059,13 @@
         const password = document.getElementById('regPassword').value;
         const confirm = document.getElementById('regPasswordConfirm').value;
         const errorDiv = document.getElementById('regError');
-
-        if (!username || username.length < 3) {
-            errorDiv.innerText = '❌ Никнейм минимум 3 символа';
-            return;
-        }
-        if (!password || password.length < 4) {
-            errorDiv.innerText = '❌ Пароль минимум 4 символа';
-            return;
-        }
-        if (password !== confirm) {
-            errorDiv.innerText = '❌ Пароли не совпадают';
-            return;
-        }
-        if (users[username]) {
-            errorDiv.innerText = '❌ Пользователь уже существует';
-            return;
-        }
-
-        users[username] = {password: btoa(password), createdAt: new Date().toISOString()};
+        
+        if (!username || username.length < 3) { errorDiv.innerText = '❌ Никнейм минимум 3 символа'; return; }
+        if (!password || password.length < 4) { errorDiv.innerText = '❌ Пароль минимум 4 символа'; return; }
+        if (password !== confirm) { errorDiv.innerText = '❌ Пароли не совпадают'; return; }
+        if (users[username]) { errorDiv.innerText = '❌ Пользователь уже существует'; return; }
+        
+        users[username] = { password: btoa(password), createdAt: new Date().toISOString() };
         saveUsers();
         localStorage.setItem('divine_current_user', username);
         currentUser = username;
@@ -944,15 +1076,22 @@
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value;
         const errorDiv = document.getElementById('loginError');
-
+        
         if (!users[username] || users[username].password !== btoa(password)) {
             errorDiv.innerText = '❌ Неверный никнейм или пароль';
             return;
         }
-
+        
         localStorage.setItem('divine_current_user', username);
         currentUser = username;
         initApp();
+    }
+
+    function logout() {
+        localStorage.removeItem('divine_current_user');
+        currentUser = null;
+        document.getElementById('appScreen').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'flex';
     }
 
     function showRegister() {
@@ -965,42 +1104,47 @@
         document.getElementById('registerForm').style.display = 'none';
     }
 
-    function logout() {
-        localStorage.removeItem('divine_current_user');
-        currentUser = null;
-        document.getElementById('appScreen').style.display = 'none';
-        document.getElementById('authScreen').style.display = 'flex';
-    }
-
     function initApp() {
         if (currentUser) {
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
-            document.getElementById('userBadge').innerHTML = `<i class="fas fa-user-circle"></i> ${escapeHtml(currentUser)}`;
-            renderChatList();
+            document.getElementById('usernameDisplay').innerText = currentUser;
+            updateChatList();
             switchTab('chats');
         }
     }
 
-    // Initialize
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // =====================================================================
+    // 9. ДЕМО-ПОЛЬЗОВАТЕЛИ ПРИ ПЕРВОМ ЗАПУСКЕ
+    // =====================================================================
+    if (Object.keys(users).length === 0) {
+        users = {
+            'alex': { password: btoa('1234'), createdAt: new Date().toISOString() },
+            'anna': { password: btoa('1234'), createdAt: new Date().toISOString() },
+            'demo': { password: btoa('1234'), createdAt: new Date().toISOString() }
+        };
+        saveUsers();
+    }
+
+    // Инициализация
     if (currentUser) {
         document.getElementById('authScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
-        document.getElementById('userBadge').innerHTML = `<i class="fas fa-user-circle"></i> ${escapeHtml(currentUser)}`;
-        renderChatList();
+        document.getElementById('usernameDisplay').innerText = currentUser;
+        updateChatList();
     } else {
         document.getElementById('authScreen').style.display = 'flex';
         document.getElementById('appScreen').style.display = 'none';
-    }
-
-    // Add demo users if empty
-    if (Object.keys(users).length === 0) {
-        users = {
-            'demo': {password: btoa('1234'), createdAt: new Date().toISOString()},
-            'alex': {password: btoa('1234'), createdAt: new Date().toISOString()},
-            'anna': {password: btoa('1234'), createdAt: new Date().toISOString()}
-        };
-        saveUsers();
     }
 </script>
 </body>
