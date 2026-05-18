@@ -1,372 +1,596 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Divine Messenger — MVP Техническая Документация и Архитектура</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Divine — мессенджер нового поколения</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-text-color: #000000;
-            --tg-theme-hint-color: #707579;
-            --tg-theme-link-color: #2481cc;
-            --tg-theme-button-color: #2481cc;
-            --tg-theme-button-text-color: #ffffff;
-            --tg-theme-secondary-bg-color: #f4f4f5;
-            --divine-gradient: linear-gradient(135deg, #b3e5fc 0%, #e1bee7 100%);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--tg-theme-secondary-bg-color);
-            color: var(--tg-theme-text-color);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+            background: #0c0f17;
+            font-family: 'Inter', sans-serif;
+            color: #eef2ff;
+            line-height: 1.5;
+            scroll-behavior: smooth;
         }
 
+        /* neon glow helper */
+        .neon-text {
+            text-shadow: 0 0 6px rgba(0, 255, 255, 0.4), 0 0 12px rgba(0, 180, 255, 0.2);
+        }
+
+        /* container */
         .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: var(--tg-theme-bg-color);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
 
-        header {
-            text-align: center;
-            border-bottom: 2px solid var(--tg-theme-secondary-bg-color);
-            padding-bottom: 30px;
-            background: var(--divine-gradient);
-            margin: -40px -40px 40px -40px;
-            padding: 60px 40px;
-            border-radius: 12px 12px 0 0;
-            color: #1a237e;
+        /* header / nav */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(46, 55, 80, 0.6);
         }
-
         .logo {
-            font-size: 3rem;
-            font-weight: 800;
-            margin: 0;
-            letter-spacing: -1px;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Space Grotesk', monospace;
+            background: linear-gradient(135deg, #b6f0ff, #7b9eff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .logo i {
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            color: #5bc0ff;
+            margin-right: 6px;
+        }
+        .nav-links {
             display: flex;
+            gap: 32px;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+        }
+        .nav-links a {
+            color: #b9c7db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            color: #7bc9ff;
+        }
+        .btn-outline {
+            border: 1px solid #3b4b6e;
+            padding: 8px 18px;
+            border-radius: 60px;
+            background: transparent;
+            transition: 0.2s;
+        }
+        .btn-outline:hover {
+            border-color: #5bc0ff;
+            background: rgba(91, 192, 255, 0.05);
         }
 
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
+        /* hero */
+        .hero {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            font-size: 2rem;
+            justify-content: space-between;
+            padding: 60px 0 40px;
+            gap: 40px;
         }
-
-        h2 {
-            color: var(--tg-theme-link-color);
-            border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
-            padding-bottom: 10px;
-            margin-top: 40px;
+        .hero-left {
+            flex: 1;
         }
-
-        h3 {
-            color: #333;
-            margin-top: 25px;
+        .hero-badge {
+            background: rgba(91, 192, 255, 0.12);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 24px;
+            backdrop-filter: blur(2px);
+            border: 0.5px solid rgba(91, 192, 255, 0.3);
         }
-
-        code, pre {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            background: #f8f9fa;
-            border-radius: 6px;
+        .hero-left h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #b1d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        code {
-            padding: 2px 6px;
-            font-size: 0.9em;
-            color: #d63384;
+        .hero-left p {
+            font-size: 18px;
+            color: #b3c2db;
+            max-width: 520px;
+            margin-bottom: 32px;
         }
-
-        pre {
-            padding: 15px;
-            overflow-x: auto;
-            border: 1px solid #e9ecef;
-            color: #212529;
+        .btn-primary {
+            background: linear-gradient(135deg, #2f80ed, #1e5bbf);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 44px;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(47, 128, 237, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
-
-        .endpoint-table, .plan-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4098ff, #2f6bc0);
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(47, 128, 237, 0.4);
         }
-
-        .endpoint-table th, .endpoint-table td, .plan-table th, .plan-table td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
+        .hero-right {
+            flex: 1;
+            background: radial-gradient(circle at 30% 20%, #1a2332, #0a0e17);
+            border-radius: 48px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(91, 192, 255, 0.2);
+            backdrop-filter: blur(2px);
+        }
+        .phone-mock {
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        .mock-chat {
+            background: #131a24;
+            border-radius: 32px;
+            padding: 16px;
             text-align: left;
         }
+        .msg {
+            background: #1e2a36;
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin: 8px 0;
+            width: fit-content;
+            max-width: 85%;
+        }
+        .msg-me {
+            background: #2f80ed;
+            margin-left: auto;
+        }
 
-        .endpoint-table th, .plan-table th {
-            background-color: var(--tg-theme-secondary-bg-color);
+        /* features grid */
+        .section-title {
+            font-size: 32px;
             font-weight: 600;
-        }
-
-        .method {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.8em;
-        }
-
-        .method-rpc { background: #e3f2fd; color: #0d47a1; }
-        .method-post { background: #e8f5e9; color: #1b5e20; }
-
-        .badge {
-            background: var(--tg-theme-link-color);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.85em;
-        }
-
-        .palette-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .color-card {
-            padding: 20px;
-            border-radius: 8px;
             text-align: center;
+            margin: 64px 0 32px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 28px;
+            margin: 40px 0;
+        }
+        .feature-card {
+            background: rgba(20, 28, 40, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 28px 22px;
+            transition: 0.2s;
+            border: 1px solid rgba(70, 100, 140, 0.3);
+        }
+        .feature-card:hover {
+            border-color: #5bc0ff80;
+            transform: translateY(-4px);
+        }
+        .feature-icon {
+            font-size: 40px;
+            color: #5bc0ff;
+            margin-bottom: 18px;
+        }
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        /* tabs simulator */
+        .tabs-demo {
+            background: #0f1420;
+            border-radius: 40px;
+            padding: 24px;
+            margin: 48px 0;
+            border: 1px solid #2a3450;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid #29314a;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: #9aabca;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #2f80ed;
             color: white;
-            font-weight: bold;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .tab-content {
+            padding: 24px 8px 0;
+            display: none;
+        }
+        .tab-content.active-tab {
+            display: block;
+        }
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #1e2538;
+        }
+
+        footer {
+            text-align: center;
+            padding: 48px 0 32px;
+            border-top: 1px solid #1b2333;
+            margin-top: 32px;
+            color: #7e8aa8;
+        }
+
+        /* ---- Стили для модального окна с жёлто-белыми тенями ---- */
+        .reg-modal-card {
+            background: #11161f;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 44px;
+            padding: 28px;
+            border: 1px solid #ffd966;
+            box-shadow: 0 0 15px rgba(255, 220, 100, 0.4), 0 0 5px rgba(255, 255, 200, 0.6);
+            transition: box-shadow 0.2s;
+        }
+        .reg-modal-card:hover {
+            box-shadow: 0 0 25px rgba(255, 220, 100, 0.6), 0 0 10px rgba(255, 255, 180, 0.8);
+        }
+        .gold-btn {
+            background: linear-gradient(135deg, #f5b042, #ffdd88);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #1e2a2f;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(255, 200, 80, 0.5), 0 0 6px rgba(255, 215, 0, 0.7);
+        }
+        .gold-btn:hover {
+            transform: scale(1.01);
+            background: linear-gradient(135deg, #ffc55a, #ffefaa);
+            box-shadow: 0 4px 14px rgba(255, 210, 80, 0.8), 0 0 12px rgba(255, 235, 100, 0.9);
+        }
+        .gold-outline {
+            background: transparent;
+            border: 1px solid #ffdb8e;
+            color: #ffdfaa;
+            box-shadow: 0 0 6px rgba(255, 200, 100, 0.4);
+        }
+        .gold-outline:hover {
+            background: rgba(255, 200, 100, 0.1);
+            border-color: #ffecb3;
+            box-shadow: 0 0 12px rgba(255, 220, 100, 0.6);
+        }
+        .input-glow {
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            border: 1px solid #ffda88;
+            background: #0b0f16;
+            color: white;
+            font-size: 16px;
+            transition: 0.2s;
+            margin-bottom: 20px;
+        }
+        .input-glow:focus {
+            outline: none;
+            border-color: #ffcd6b;
+            box-shadow: 0 0 10px rgba(255, 220, 100, 0.5);
+        }
+
+        @media (max-width: 760px) {
+            .hero-left h1 {
+                font-size: 36px;
+            }
+            .navbar {
+                flex-direction: column;
+                gap: 14px;
+            }
+            .container {
+                padding: 0 20px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
+    <nav class="navbar">
         <div class="logo">
-            <div class="logo-icon">👼</div>
-            DIVINE
+            <i class="fab fa-telegram-plane"></i> Divine
         </div>
-        <p style="margin: 10px 0 0 0; font-size: 1.2rem; opacity: 0.9;">Архитектурный манифест и технический паспорт MVP мессенджера</p>
-    </header>
-
-    <!-- 1. ТЕХНИЧЕСКОЕ РЕЗЮМЕ -->
-    <section>
-        <h2>1. Техническое резюме (Technical Summary)</h2>
-        
-        <h3>Протокол и Шифрование</h3>
-        <p>Мессенджер <strong>Divine</strong> разворачивается на базе кастомной реализации бинарного протокола <strong>MTProto 2.0</strong> поверх TCP/Веб-сокетов, оптимизированного под низкую задержку (low latency). Облачные чаты защищены сквозным шифрованием на участке клиент-сервер, секретные чаты и звонки 1-1 используют чистый <strong>End-to-End (E2EE) Diffie-Hellman</strong> с генерацией ключей на устройствах пользователей.</p>
-
-        <h3>Стек технологий Бэкенда</h3>
-        <ul>
-            <li><strong>Язык разработки:</strong> Go (Golang) — высокая производительность конкурентных соединений (Goroutines).</li>
-            <li><strong>Слой хранения (Основная БД):</strong> PostgreSQL + TimescaleDB (для горизонтально масштабируемой и быстрой истории сообщений).</li>
-            <li><strong>Слой кэширования и очередей:</strong> Redis Cluster (хранение активных пользовательских сессий, кеширование состояний "онлайн", брокер очередей сообщений).</li>
-            <li><strong>Распределенное хранилище файлов:</strong> MinIO (S3-совместимое) для медиафайлов, стикеров и голосовых сообщений, прикрытое CDN.</li>
-        </ul>
-
-        <h3>Real-time звонки и обход NAT</h3>
-        <p>Голосовые и видеовызовы реализуются через стек <strong>WebRTC</strong>. Для обеспечения коннективности между клиентами в любых сетях применяется архитектура <strong>ICE (Interactive Connectivity Establishment)</strong>:</p>
-        <ul>
-            <li><strong>STUN серверы:</strong> Для определения публичных IP-адресов клиентов при прямом соединении (P2P).</li>
-            <li><strong>TURN серверы (Coturn):</strong> Если прямое P2P соединение невозможно (симметричный NAT), трафик ретранслируется через распределенные медиа-серверы с минимальной задержкой.</li>
-            <li><strong>Групповые звонки (до 30 человек):</strong> Реализуются через <strong>SFU (Selective Forwarding Unit)</strong> медиа-сервер на базе <i>LiveKit</i> или <i>Janus</i>. Клиент отправляет один поток, сервер раздает его остальным участникам, снижая нагрузку на исходящий канал спикера.</li>
-        </ul>
-
-        <h3>Авторизация и Синхронизация</h3>
-        <p>Регистрация базируется строго на телефонном номере. При входе генерируется уникальный <code>auth_key</code> устройства по протоколу DH. Если аккаунт активен на другом девайсе, RPC-запрос отправляет системный верификационный код во внутренний сервисный чат Divine. SMS шлюз (Twilio/Infobip) задействуется как fallback-метод.</p>
-    </section>
-
-    <!-- 2. ПОШАГОВЫЙ ПЛАН РАЗРАБОТКИ -->
-    <section>
-        <h2>2. Пошаговый план разработки (Sprint: 2 недели, 2 Dev + 1 QA)</h2>
-        <p><strong>Ресурсная сетка:</strong> Dev 1 (Backend/Инфраструктура), Dev 2 (Frontend/Mobile - Flutter мультиплатформа), QA (Тестирование/Автотесты).</p>
-        
-        <table class="plan-table">
-            <thead>
-                <tr>
-                    <th>Дни</th>
-                    <th>Этап / Задачи</th>
-                    <th>Ответственный</th>
-                    <th>Результат (Milestone)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>День 1-3</strong></td>
-                    <td>Развертывание инфраструктуры. Настройка БД, Redis, Coturn. Генерация базовых схем MTProto. Реализация слоя авторизации (sendCode, signIn).</td>
-                    <td>Dev 1, Dev 2</td>
-                    <td>Готов бэкенд авторизации, базовое мобильное приложение открывает экран ввода телефона.</td>
-                </tr>
-                <tr>
-                    <td><strong>День 4-6</strong></td>
-                    <td>Реализация движка облачных сообщений (транспорт через WebSockets). Синхронизация состояний чатов при входе. Локальная БД клиента (SQLite).</td>
-                    <td>Dev 1, Dev 2</td>
-                    <td>Работают текстовые сообщения 1-1, статусы доставки (одна/две галочки), форматирование текста.</td>
-                </tr>
-                <tr>
-                    <td><strong>День 7-9</strong></td>
-                    <td>Интеграция медиа-сервера (MinIO/S3). Логика групповых чатов. Реализация WebRTC пайплайна для звонков 1-1 через STUN/TURN. Логика профилей и usernames.</td>
-                    <td>Dev 1, Dev 2, QA</td>
-                    <td>Передаются фото/видео, работают звонки между двумя устройствами в локальной сети и за NAT. QA начинает смоук-тесты.</td>
-                </tr>
-                <tr>
-                    <td><strong>День 10-12</strong></td>
-                    <td>Доработка UI/UX по гайдлайнам (вкладки, кастомные темы, градиентный фон). Внедрение push-уведомлений. Оптимизация производительности (энергоэффективность).</td>
-                    <td>Dev 2, QA</td>
-                    <td>Приложение визуально идентично Telegram. Настроены пересылки, ответы, реакции и профили. Полное регрессионное тестирование.</td>
-                </tr>
-                <tr>
-                    <td><strong>День 13-14</strong></td>
-                    <td>Исправление критических багов (Bugfixing). Сборка релизных билдов под Android (APK) и iOS (TestFlight). Финальный нагрузочный тест бэкенда.</td>
-                    <td>Все роли</td>
-                    <td>MVP Divine полностью готов к закрытому бета-тесту. Развернут Web-клиент.</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- 3. СПИСОК API ЭНДПОИНТОВ -->
-    <section>
-        <h2>3. Протокол API: Список Эндпоинтов (RPC / HTTPS)</h2>
-        <p>Ниже представлены ключевые методы взаимодействия клиента с RPC-сервером Divine (структура аналогична схеме Telegram API TL).</p>
-        
-        <table class="endpoint-table">
-            <thead>
-                <tr>
-                    <th>Категория</th>
-                    <th>Метод (RPC / Endpoint)</th>
-                    <th>Тип</th>
-                    <th>Описание</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Auth -->
-                <tr><td>Auth</td><td><code>auth.sendCode</code></td><td><span class="method method-rpc">RPC</span></td><td>Запрос кода авторизации (в приложение или по SMS).</td></tr>
-                <tr><td>Auth</td><td><code>auth.signIn</code></td><td><span class="method method-rpc">RPC</span></td><td>Вход по коду и номеру телефона. Возвращает токен сессии.</td></tr>
-                <tr><td>Auth</td><td><code>auth.signUp</code></td><td><span class="method method-rpc">RPC</span></td><td>Регистрация нового пользователя (Имя, Фамилия).</td></tr>
-                <tr><td>Auth</td><td><code>auth.checkPassword</code></td><td><span class="method method-rpc">RPC</span></td><td>Проверка 2FA облачного пароля.</td></tr>
-                <tr><td>Auth</td><td><code>auth.logOut</code></td><td><span class="method method-rpc">RPC</span></td><td>Завершение текущей сессии и инвалидация ключа.</td></tr>
-                
-                <!-- Messages -->
-                <tr><td>Messages</td><td><code>messages.getDialogs</code></td><td><span class="method method-rpc">RPC</span></td><td>Получение списка активных чатов, каналов и архива.</td></tr>
-                <tr><td>Messages</td><td><code>messages.getHistory</code></td><td><span class="method method-rpc">RPC</span></td><td>Загрузка истории сообщений конкретного диалога (с пагинацией).</td></tr>
-                <tr><td>Messages</td><td><code>messages.sendMessage</code></td><td><span class="method method-rpc">RPC</span></td><td>Отправка текстового сообщения (поддерживает сущности форматирования).</td></tr>
-                <tr><td>Messages</td><td><code>messages.editMessage</code></td><td><span class="method method-rpc">RPC</span></td><td>Редактирование текста отправленного сообщения.</td></tr>
-                <tr><td>Messages</td><td><code>messages.deleteMessages</code></td><td><span class="method method-rpc">RPC</span></td><td>Удаление сообщений для себя или для всех участников.</td></tr>
-                <tr><td>Messages</td><td><code>messages.sendMedia</code></td><td><span class="method method-rpc">RPC</span></td><td>Отправка медиа-объекта (ID предварительно загруженного файла).</td></tr>
-                <tr><td>Messages</td><td><code>messages.sendReaction</code></td><td><span class="method method-rpc">RPC</span></td><td>Установка/изменение эмодзи-реакции на сообщение.</td></tr>
-                <tr><td>Messages</td><td><code>messages.getPeerDialogs</code></td><td><span class="method method-rpc">RPC</span></td><td>Запрос актуального статуса конкретного диалога (черновики, прочитано).</td></tr>
-                
-                <!-- Contacts -->
-                <tr><td>Contacts</td><td><code>contacts.importContacts</code></td><td><span class="method method-rpc">RPC</span></td><td>Синхронизация телефонной книги устройства с сервером.</td></tr>
-                <tr><td>Contacts</td><td><code>contacts.search</code></td><td><span class="method method-rpc">RPC</span></td><td>Глобальный поиск пользователей по <code>@username</code>.</td></tr>
-                <tr><td>Contacts</td><td><code>contacts.getStatuses</code></td><td><span class="method method-rpc">RPC</span></td><td>Получение статусов "в сети / был тогда-то" для списка контактов.</td></tr>
-                
-                <!-- Channels/Groups -->
-                <tr><td>Channels</td><td><code>channels.createChannel</code></td><td><span class="method method-rpc">RPC</span></td><td>Создание новой группы (до 200к) или супергруппы.</td></tr>
-                <tr><td>Channels</td><td><code>channels.inviteToChannel</code></td><td><span class="method method-rpc">RPC</span></td><td>Добавление участников в группу по инвайт-ссылке или ID.</td></tr>
-                <tr><td>Channels</td><td><code>channels.editAdminRights</code></td><td><span class="method method-rpc">RPC</span></td><td>Управление правами администраторов группы.</td></tr>
-                
-                <!-- Calls -->
-                <tr><td>Calls</td><td><code>phone.requestCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Инициация звонка. Возвращает параметры шифрования и STUN/TURN.</td></tr>
-                <tr><td>Calls</td><td><code>phone.acceptCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Принятие входящего вызова со стороны получателя.</td></tr>
-                <tr><td>Calls</td><td><code>phone.confirmCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Финализация обмена ключами шифрования вызова.</td></tr>
-                <tr><td>Calls</td><td><code>phone.discardCall</code></td><td><span class="method method-rpc">RPC</span></td><td>Завершение или отклонение вызова.</td></tr>
-                
-                <!-- Account / Privacy -->
-                <tr><td>Account</td><td><code>account.updateProfile</code></td><td><span class="method method-rpc">RPC</span></td><td>Изменение имени, фамилии и блока Bio (до 140 символов).</td></tr>
-                <tr><td>Account</td><td><code>account.updateUsername</code></td><td><span class="method method-rpc">RPC</span></td><td>Резервирование уникального публичного имени <code>@username</code>.</td></tr>
-                <tr><td>Account</td><td><code>account.setPrivacy</code></td><td><span class="method method-rpc">RPC</span></td><td>Конфигурация видимости номера, фото и статуса онлайна.</td></tr>
-                <tr><td>Account</td><td><code>account.getAuthorizations</code></td><td><span class="method method-rpc">RPC</span></td><td>Получение списка всех активных сессий (устройств).</td></tr>
-                <tr><td>Account</td><td><code>account.resetAuthorization</code></td><td><span class="method method-rpc">RPC</span></td><td>Удаленный сброс (terminate) выбранной сессии.</td></tr>
-                <tr><td>Account</td><td><code>account.updatePassword</code></td><td><span class="method method-rpc">RPC</span></td><td>Установка/изменение настроек двухфакторной аутентификации (2FA).</td></tr>
-                
-                <!-- Files -->
-                <tr><td>Files</td><td><code>upload.saveFilePart</code></td><td><span class="method method-post">POST</span></td><td>Загрузка чанка файла на сервер (для больших медиа).</td></tr>
-                <tr><td>Files</td><td><code>upload.getFile</code></td><td><span class="method method-rpc">RPC</span></td><td>Скачивание файла или его превью по частям.</td></tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- 4. ИНСТРУКЦИЯ ПО СБОРКЕ -->
-    <section>
-        <h2>4. Инструкция по развертыванию и сборке клиентов</h2>
-        
-        <h3>Шаг 1: Клонирование репозиториев</h3>
-        <pre><code># Клонирование монорепозитория Divine (Backend + Спецификации + Клиенты)
-git clone https://github.com/divine-messenger/divine-core.git
-cd divine-core</code></pre>
-
-        <h3>Шаг 2: Инициализация окружения бэкенда</h3>
-        <pre><code># Копирование и настройка переменных окружения
-cp .env.example .env
-
-# Запуск инфраструктуры (PostgreSQL, Redis, Coturn, MinIO) через Docker Compose
-docker-compose up -d
-
-# Сборка и запуск основного Go-сервера
-go build -o divine-server cmd/server/main.go
-./divine-server</code></pre>
-
-        <h3>Шаг 3: Сборка Мобильного клиента (Flutter-платформа)</h3>
-        <p>Перейдите в директорию клиента и соберите приложения для целевых мобильных ОС:</p>
-        <pre><code>cd apps/mobile_client
-flutter pub get
-
-# Компиляция под Android (Сборка релизного APK)
-flutter build apk --release
-
-# Компиляция под iOS (Создание архива для App Store / TestFlight)
-flutter build ipa --release</code></pre>
-    </section>
-
-    <!-- 5. ДИЗАЙН-ГАЙД -->
-    <section>
-        <h2>5. Дизайн-гайд Divine (UI/UX Спецификация)</h2>
-        <p>Интерфейс мессенджера Divine полностью воссоздает привычную эргономику Telegram, минимизируя барьер входа для пользователей, но привнося премиальную дизайн-айдентику.</p>
-
-        <h3>Фирменная цветовая палитра</h3>
-        <div class="palette-container">
-            <div class="color-card" style="background-color: #2481cc;">Divine Blue (#2481cc)<br>Основной акцент</div>
-            <div class="color-card" style="background-color: #1a237e;">Deep Divine (#1a237e)<br>Текст заголовков</div>
-            <div class="color-card" style="background-color: #b3e5fc; color: #333;">Light Aura (#b3e5fc)<br>Фон градиента 1</div>
-            <div class="color-card" style="background-color: #e1bee7; color: #333;">Lavender Mist (#e1bee7)<br>Фон градиента 2</div>
+        <div class="nav-links">
+            <a href="#">Чаты</a>
+            <a href="#">Звонки</a>
+            <a href="#">Контакты</a>
+            <a href="#" class="btn-outline">Скачать</a>
         </div>
+    </nav>
 
-        <h3>Айдентика и Логотип</h3>
-        <blockquote>
-            <strong>Логотип «Divine»:</strong> Стилизованное минималистичное белое крыло, вписанное в идеальный круг с небесно-голубым градиентом. Геометрия линий в точности повторяет углы наклона бумажного самолетика Telegram, сохраняя преемственность скорости и легкости.
-        </blockquote>
+    <div class="hero">
+        <div class="hero-left">
+            <span class="hero-badge"><i class="fas fa-shield-alt"></i> Сквозное шифрование • E2EE</span>
+            <h1>Divine — <span class="neon-text">как Telegram</span>, только твой</h1>
+            <p>Звонки, чаты, каналы, секретные диалоги, облако 2 ГБ и полный контроль. Регистрация по номеру + SMS. Приватность во главе угла.</p>
+            <button class="btn-primary" id="getStartedBtn"><i class="fas fa-mobile-alt"></i> Начать — ввести номер</button>
+        </div>
+        <div class="hero-right">
+            <div class="phone-mock">
+                <div class="mock-chat">
+                    <div class="msg">✨ Divine: добро пожаловать! Полный аналог Telegram.</div>
+                    <div class="msg msg-me">Секретные чаты, таймер сообщений ✨</div>
+                    <div class="msg">🎥 Групповые звонки до 30 чел, PiP</div>
+                    <div class="msg msg-me"><i class="fas fa-check-circle"></i> И стикеры, и каналы, и боты</div>
+                </div>
+                <div style="margin-top: 16px; font-size:13px; color:#8d9bc0;"><i class="fas fa-lock"></i> Ваш номер только для входа</div>
+            </div>
+        </div>
+    </div>
 
-        <h3>Дефолтное оформление чатов</h3>
-        <ul>
-            <li><strong>Задний фон по умолчанию:</strong> Мягкий бесшовный градиент от небесно-голубого (<code>#b3e5fc</code>) к нежной лаванде (<code>#e1bee7</code>) с едва заметным полупрозрачным паттерном из геометрических линий (интенсивность паттерна 4%).</li>
-            <li><strong>Расположение элементов:</strong>
-                <ul>
-                    <li>Нижний бар навигации (Mobile): 4 вкладки слева направо — <i>Контакты</i> (иконка силуэта), <i>Звонки</i> (телефонная трубка), <i>Чаты</i> (бабл чата со счетчиком непрочитанных), <i>Настройки</i> (шестеренка с миниатюрой аватара).</li>
-                    <li>Список чатов: Аватар слева (круглый), имя и превью сообщения по центру, время и статус доставки (две галочки) — справа. Нажатие на чат открывает экран переписки с сохранением нативного эффекта плавного скольжения (Slide Transition).</li>
-                </ul>
-            </li>
-        </ul>
-    </section>
+    <!-- вкладки в стиле Telegram -->
+    <div class="tabs-demo">
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="chats"><i class="fas fa-comment-dots"></i> Чаты</button>
+            <button class="tab-btn" data-tab="calls"><i class="fas fa-phone-alt"></i> Звонки</button>
+            <button class="tab-btn" data-tab="contacts"><i class="fas fa-address-book"></i> Контакты</button>
+            <button class="tab-btn" data-tab="profile"><i class="fas fa-user-astronaut"></i> Профиль</button>
+        </div>
+        <div class="tab-content active-tab" id="chatsTab">
+            <div class="contact-row"><i class="fas fa-circle" style="font-size: 12px; color:#31a24c;"></i> <strong>Павел Дуров</strong> <span style="margin-left:auto; font-size:12px;">онлайн</span></div>
+            <div class="contact-row"><i class="fas fa-users"></i> <strong>Divine Dev Team</strong> <span style="margin-left:auto;">🔥 142 сообщения</span></div>
+            <div class="contact-row"><i class="fas fa-bullhorn"></i> <strong>Канал: Новости Divine</strong> <span>подписчиков 12.4K</span></div>
+            <div class="contact-row"><i class="fas fa-robot"></i> <strong>Divine Bot</strong> <span>бот для inline-режима</span></div>
+        </div>
+        <div class="tab-content" id="callsTab">
+            <div class="contact-row"><i class="fas fa-video"></i> Видеозвонок с Алексеем — <span style="color:#5bc0ff;">сегодня 14:30</span></div>
+            <div class="contact-row"><i class="fas fa-phone-slash"></i> Пропущенный — Ирина <span>E2EE</span></div>
+            <div class="contact-row"><i class="fas fa-microphone-alt"></i> Групповой звонок (4 участника) — запись экрана доступна</div>
+        </div>
+        <div class="tab-content" id="contactsTab">
+            <div class="contact-row"><i class="fas fa-qrcode"></i> Ваш QR-код: @divine_user</div>
+            <div class="contact-row"><i class="fas fa-user-plus"></i> Пригласить по ссылке: divine.me/join_xyz</div>
+            <div class="contact-row"><i class="fas fa-address-card"></i> +7 999 123-45-67 (скрыть номер можно в настройках)</div>
+        </div>
+        <div class="tab-content" id="profileTab">
+            <div class="contact-row"><i class="fas fa-user-circle"></i> <strong>Alex Divine</strong> | @alex_divine</div>
+            <div class="contact-row"><i class="fas fa-palette"></i> Темы: тёмная / OLED / авто</div>
+            <div class="contact-row"><i class="fas fa-shield-alt"></i> 2FA включён, сессии: iPhone, Web</div>
+            <div class="contact-row"><i class="fas fa-trash-alt"></i> Автоудаление кэша: 5 ГБ занято</div>
+        </div>
+        <p style="font-size:13px; margin-top: 24px; color:#7887a8;"><i class="fas fa-check-double"></i> Всё как в Telegram: опросы, реакции, голосовые 2x, стикеры, каналы до бесконечности</p>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-lock"></i></div><h3>Секретные чаты</h3><p>E2EE, таймер самоуничтожения, запрет скриншотов на Android.</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div><h3>Облако 2+ ГБ</h3><p>Любые файлы, папки, доступ с устройств.</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-video"></i></div><h3>Групповые звонки 30 чел</h3><p>PiP, шумоподавление, общий чат во время звонка.</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-comment-dots"></i></div><h3>Боты + Inline</h3><p>Клавиатуры, платежи, HTML5-игры.</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>Каналы и статистика</h3><p>Безлимит подписчиков, кнопки, комментарии.</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-user-secret"></i></div><h3>Приватность 360°</h3><p>Скрыть номер, онлайн, запрет пересылки.</p></div>
+    </div>
+
+    <!-- Модальное окно регистрации с жёлто-белыми тенями -->
+    <div id="regModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter: blur(10px); align-items:center; justify-content:center; z-index:1000;">
+        <div class="reg-modal-card">
+            <h3 style="margin-bottom:16px;"><i class="fas fa-gem" style="color: #ffdd99;"></i> Регистрация Divine</h3>
+            <p style="margin-bottom:20px; font-size:14px;">Введите номер телефона (как в Telegram):</p>
+            <input type="tel" id="phoneNumber" class="input-glow" placeholder="+7 999 123 45 67">
+            <div id="smsGroup" style="display:none;">
+                <p style="margin-bottom:8px;">Код из SMS (5 цифр)</p>
+                <input type="text" id="smsCode" class="input-glow" placeholder="12345">
+            </div>
+            <button id="sendSmsBtn" class="gold-btn"><i class="fas fa-paper-plane"></i> Отправить SMS</button>
+            <button id="voiceCallBtn" class="gold-btn gold-outline" style="margin-top: 12px;"><i class="fas fa-phone-alt"></i> Позвонить, если SMS нет</button>
+            <button id="closeModal" style="margin-top:16px; background:transparent; border:none; color:#ffdfaa; width:100%; cursor:pointer; text-shadow: 0 0 2px gold;">Закрыть</button>
+            <p id="regStatus" style="font-size:12px; margin-top:12px; color:#ffe1a0;"></p>
+            <div id="timerText" style="font-size:12px; margin-top:6px; color:#ffcd88;"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p><i class="fab fa-telegram"></i> Divine — полная копия Telegram по функциям • регистрация только по номеру и SMS • MTProto / WebSocket • Open Source spirit</p>
+        <p style="margin-top: 8px;">© 2025 Divine Messenger — приватность превыше всего</p>
+    </footer>
 </div>
 
+<script>
+    // Полностью исправленная логика регистрации + таймер + золотые тени
+    const modal = document.getElementById('regModal');
+    const getStarted = document.getElementById('getStartedBtn');
+    const closeModal = document.getElementById('closeModal');
+    const sendSmsBtn = document.getElementById('sendSmsBtn');
+    const voiceCallBtn = document.getElementById('voiceCallBtn');
+    const phoneInput = document.getElementById('phoneNumber');
+    const smsGroup = document.getElementById('smsGroup');
+    const smsCodeInput = document.getElementById('smsCode');
+    const regStatus = document.getElementById('regStatus');
+    const timerText = document.getElementById('timerText');
+
+    let fakeCode = null;
+    let timerInterval = null;
+    let canResend = true;
+
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        timerText.innerText = '';
+    }
+
+    function startResendTimer(seconds = 60) {
+        let remaining = seconds;
+        canResend = false;
+        timerText.innerText = `⏳ Повторная отправка через ${remaining} сек`;
+        timerInterval = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                stopTimer();
+                canResend = true;
+                timerText.innerText = '✅ Можно запросить код заново';
+                sendSmsBtn.disabled = false;
+                voiceCallBtn.disabled = false;
+                sendSmsBtn.style.opacity = '1';
+                voiceCallBtn.style.opacity = '1';
+            } else {
+                timerText.innerText = `⏳ Повторная отправка через ${remaining} сек`;
+            }
+        }, 1000);
+    }
+
+    function resetModalState() {
+        phoneInput.value = '';
+        smsCodeInput.value = '';
+        smsGroup.style.display = 'none';
+        regStatus.innerText = '';
+        fakeCode = null;
+        stopTimer();
+        canResend = true;
+        sendSmsBtn.disabled = false;
+        voiceCallBtn.disabled = false;
+        sendSmsBtn.style.opacity = '1';
+        voiceCallBtn.style.opacity = '1';
+        sendSmsBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить SMS';
+    }
+
+    getStarted.addEventListener('click', () => {
+        resetModalState();
+        modal.style.display = 'flex';
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+        resetModalState();
+    });
+
+    function simulateSendCode(isVoice = false) {
+        const phone = phoneInput.value.trim();
+        if (!phone || phone.length < 5) {
+            regStatus.innerText = '❌ Введите корректный номер телефона';
+            return false;
+        }
+        if (!canResend && fakeCode !== null) {
+            regStatus.innerText = '⏳ Подождите перед повторным запросом кода';
+            return false;
+        }
+        // Генерация 5-значного кода
+        fakeCode = Math.floor(10000 + Math.random() * 90000).toString();
+        if (isVoice) {
+            regStatus.innerText = `📞 Автозвонок: ваш голосовой код — ${fakeCode} (демо)`;
+        } else {
+            regStatus.innerText = `📨 SMS отправлен на ${phone}. Код: ${fakeCode} (демо-режим)`;
+        }
+        smsGroup.style.display = 'block';
+        sendSmsBtn.innerHTML = '<i class="fas fa-check-double"></i> Подтвердить код';
+        startResendTimer(60);
+        return true;
+    }
+
+    sendSmsBtn.addEventListener('click', () => {
+        if (!fakeCode) {
+            // Первый запрос SMS
+            simulateSendCode(false);
+        } else {
+            // Проверка кода
+            const enteredCode = smsCodeInput.value.trim();
+            if (enteredCode === fakeCode) {
+                regStatus.innerHTML = '✅ Успешная регистрация! Добро пожаловать в Divine.';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    alert('Вы вошли в Divine! Все функции Telegram доступны: чаты, звонки, секретные диалоги, настройки приватности.');
+                    resetModalState();
+                }, 1300);
+            } else {
+                regStatus.innerText = '❌ Неверный код. Попробуйте ещё раз или запросите звонок.';
+            }
+        }
+    });
+
+    voiceCallBtn.addEventListener('click', () => {
+        if (!fakeCode) {
+            simulateSendCode(true);
+        } else {
+            if (!canResend) {
+                regStatus.innerText = '⏳ Подождите перед повторным звонком';
+                return;
+            }
+            const newCode = Math.floor(10000 + Math.random() * 90000).toString();
+            fakeCode = newCode;
+            regStatus.innerText = `📞 Повторный звонок: ваш код — ${fakeCode}`;
+            startResendTimer(60);
+        }
+    });
+
+    // Вкладки (рабочие)
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = {
+        chats: document.getElementById('chatsTab'),
+        calls: document.getElementById('callsTab'),
+        contacts: document.getElementById('contactsTab'),
+        profile: document.getElementById('profileTab')
+    };
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            Object.values(contents).forEach(t => t.classList.remove('active-tab'));
+            if (tabId === 'chats') contents.chats.classList.add('active-tab');
+            if (tabId === 'calls') contents.calls.classList.add('active-tab');
+            if (tabId === 'contacts') contents.contacts.classList.add('active-tab');
+            if (tabId === 'profile') contents.profile.classList.add('active-tab');
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+</script>
 </body>
 </html>
-
-```
